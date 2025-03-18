@@ -1,11 +1,12 @@
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import Mapped, relationship, mapped_column
-from sqlalchemy import Column, ForeignKey, Table, Integer, Enum, String
-from typing import Optional
-from datetime import datetime
-from flask_security import RoleMixin, UserMixin
 import enum
 import uuid
+from datetime import datetime
+from typing import Optional
+
+from flask_security import RoleMixin, UserMixin
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Column, ForeignKey, Table, Integer, Enum, String
+from sqlalchemy.orm import Mapped, relationship, mapped_column
 
 db = SQLAlchemy()
 
