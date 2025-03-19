@@ -25,14 +25,12 @@ class Base(db.Model):
 user_roles = Table(
     'user_roles',
     db.metadata,
-    Column('user_id', Integer, ForeignKey('users.id'), primary_key=True),
-    Column('role_id', Integer, ForeignKey('roles.id'), primary_key=True)
+    Column('user_id', Integer, ForeignKey('user.id'), primary_key=True),
+    Column('role_id', Integer, ForeignKey('role.id'), primary_key=True)
 )
 
 
 class Role(Base, RoleMixin):
-  __tablename__ = 'roles'
-
   id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
   name: Mapped[str] = mapped_column(String(80), unique=True, nullable=False)
 
@@ -44,8 +42,6 @@ class Role(Base, RoleMixin):
 
 
 class User(Base, UserMixin):
-  __tablename__ = 'users'
-
   id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
   email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
   password: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -59,3 +55,60 @@ class User(Base, UserMixin):
       secondary=user_roles,
       back_populates="users"
   )
+  quiz_attempts: Mapped[list["QuizAttempt"]] = relationship("QuizAttempt", back_populates="user")
+
+
+class Subject(Base):
+  id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+  name: Mapped[str] = mapped_column(String(100), nullable=False)
+  description: Mapped[Optional[str]] = mapped_column(String(500))
+  created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now())
+
+  chapters: Mapped[list["Chapter"]] = relationship("Chapter", back_populates="subject", cascade="all, delete-orphan")
+
+
+class Chapter(Base):
+  id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+  name: Mapped[str] = mapped_column(String(100), nullable=False)
+  description: Mapped[Optional[str]] = mapped_column(String(500))
+  subject_id: Mapped[int] = mapped_column(ForeignKey('subject.id'))
+  created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now())
+
+  subject: Mapped["Subject"] = relationship("Subject", back_populates="chapters")
+  quizzes: Mapped[list["Quiz"]] = relationship("Quiz", back_populates="chapter", cascade="all, delete-orphan")
+
+
+class Quiz(Base):
+  id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+  title: Mapped[str] = mapped_column(String(100), nullable=False)
+  description: Mapped[Optional[str]] = mapped_column(String(500))
+  chapter_id: Mapped[int] = mapped_column(ForeignKey('chapter.id'))
+  created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now())
+  start_time: Mapped[Optional[datetime]] = mapped_column(nullable=True)
+  duration: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)  # Duration in minutes
+
+  chapter: Mapped["Chapter"] = relationship("Chapter", back_populates="quizzes")
+  questions: Mapped[list["Question"]] = relationship("Question", back_populates="quiz", cascade="all, delete-orphan")
+  attempts: Mapped[list["QuizAttempt"]] = relationship("QuizAttempt", back_populates="quiz")
+
+
+class Question(Base):
+  id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+  text: Mapped[str] = mapped_column(String(500), nullable=False)
+  options: Mapped[str] = mapped_column(String(1000), nullable=False)  # Store as JSON string
+  correct_answer: Mapped[int] = mapped_column(Integer, nullable=False)
+  quiz_id: Mapped[int] = mapped_column(ForeignKey('quiz.id'))
+  created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now())
+
+  quiz: Mapped["Quiz"] = relationship("Quiz", back_populates="questions")
+
+
+class QuizAttempt(Base):
+  id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+  user_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
+  quiz_id: Mapped[int] = mapped_column(ForeignKey('quiz.id'))
+  score: Mapped[int] = mapped_column(Integer, nullable=False)
+  attempted_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now())
+
+  user: Mapped["User"] = relationship("User", back_populates="quiz_attempts")
+  quiz: Mapped["Quiz"] = relationship("Quiz", back_populates="attempts")
