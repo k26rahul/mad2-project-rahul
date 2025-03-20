@@ -1,9 +1,8 @@
 <script setup>
 import { RouterView } from 'vue-router';
-import { onMounted } from 'vue';
 import store from './store';
 
-onMounted(async () => {
+window.whoami = async () => {
   try {
     const response = await fetch(`${store.api.origin}/api/auth/whoami`, {
       method: 'GET',
@@ -14,7 +13,7 @@ onMounted(async () => {
   } catch (error) {
     console.error('Error fetching whoami:', error);
   }
-});
+};
 </script>
 
 <template>

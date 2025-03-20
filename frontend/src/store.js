@@ -13,7 +13,7 @@ const store = reactive({
 // Restore state from local storage
 const savedState = JSON.parse(localStorage.getItem('store'));
 if (savedState) {
-  // Object.assign(store, savedState);
+  store.auth = { ...store.auth, ...savedState.auth };
 }
 
 // Watch for changes and save to local storage
