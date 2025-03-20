@@ -5,9 +5,9 @@ from flask_security import Security, SQLAlchemyUserDatastore
 from db.models import db, User, Role
 from db.seed import seed_data
 
-from app.routes.auth import auth_bp
-from app.routes.admin import admin_bp
-from app.routes.user import user_bp
+from routes.auth import auth_bp
+from routes.admin import admin_bp
+from routes.user import user_bp
 
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 
