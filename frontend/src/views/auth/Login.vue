@@ -27,6 +27,7 @@
 <script>
 import store from '@/store';
 import router from '@/router';
+import { post } from '@/utils/fetchHelper';
 
 export default {
   data() {
@@ -40,16 +41,11 @@ export default {
   methods: {
     async submitForm() {
       try {
-        const response = await fetch(`${store.api.origin}/api/auth/login`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            email: this.email,
-            password: this.password,
-            rememberMe: this.rememberMe,
-          }),
+        const result = await post('/api/auth/login', {
+          email: this.email,
+          password: this.password,
+          rememberMe: this.rememberMe,
         });
-        const result = await response.json();
         if (result.success) {
           store.auth.isLoggedIn = true;
           store.auth.role = result.role;
@@ -59,7 +55,6 @@ export default {
         }
       } catch (error) {
         this.errorMessage = 'An error occurred. Please try again.';
-        console.error('Login failed:', error);
       }
     },
   },
