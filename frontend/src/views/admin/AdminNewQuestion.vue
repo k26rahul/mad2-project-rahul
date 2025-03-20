@@ -1,0 +1,3 @@
+<template>
+  <h1>New Question</h1>
+</template>
