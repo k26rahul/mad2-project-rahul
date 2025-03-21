@@ -68,9 +68,9 @@ export default {
       try {
         let result;
         if (this.isEdit) {
-          result = await put(`/api/admin/chapters/${this.initialData.id}`, this.formData);
+          result = await put(`/api/admin/update-chapter/${this.initialData.id}`, this.formData);
         } else {
-          result = await post('/api/admin/chapters', {
+          result = await post('/api/admin/create-chapter', {
             ...this.formData,
             subject_id: this.subjectId,
           });

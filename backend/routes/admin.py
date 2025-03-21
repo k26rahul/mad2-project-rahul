@@ -7,7 +7,7 @@ admin_bp = Blueprint('admin', __name__)
 # Subject Routes
 
 
-@admin_bp.route('/subjects', methods=['GET'])
+@admin_bp.route('/get-subjects', methods=['GET'])
 @roles_required('admin')
 def get_subjects():
   subjects = Subject.query.all()
@@ -19,7 +19,7 @@ def get_subjects():
   return jsonify(success=True, subjects=result)
 
 
-@admin_bp.route('/subjects', methods=['POST'])
+@admin_bp.route('/create-subject', methods=['POST'])
 @roles_required('admin')
 def create_subject():
   data = request.get_json()
@@ -43,7 +43,7 @@ def create_subject():
   )
 
 
-@admin_bp.route('/subjects/<int:id>', methods=['PUT'])
+@admin_bp.route('/update-subject/<int:id>', methods=['PUT'])
 @roles_required('admin')
 def update_subject(id):
   subject = Subject.query.get_or_404(id)
@@ -56,7 +56,7 @@ def update_subject(id):
   return jsonify(success=True, subject=subject.as_dict())
 
 
-@admin_bp.route('/subjects/<int:id>', methods=['DELETE'])
+@admin_bp.route('/delete-subject/<int:id>', methods=['DELETE'])
 @roles_required('admin')
 def delete_subject(id):
   subject = Subject.query.get_or_404(id)
@@ -65,7 +65,7 @@ def delete_subject(id):
   return jsonify(success=True, message="Subject deleted successfully")
 
 
-@admin_bp.route('/subjects/<int:id>', methods=['GET'])
+@admin_bp.route('/get-subject/<int:id>', methods=['GET'])
 @roles_required('admin')
 def get_subject(id):
   subject = Subject.query.get_or_404(id)
@@ -75,7 +75,9 @@ def get_subject(id):
 
 
 # Chapter Routes
-@admin_bp.route('/chapters', methods=['POST'])
+
+
+@admin_bp.route('/create-chapter', methods=['POST'])
 @roles_required('admin')
 def create_chapter():
   data = request.get_json()
@@ -111,7 +113,7 @@ def create_chapter():
   )
 
 
-@admin_bp.route('/chapters/<int:id>', methods=['PUT'])
+@admin_bp.route('/update-chapter/<int:id>', methods=['PUT'])
 @roles_required('admin')
 def update_chapter(id):
   chapter = Chapter.query.get_or_404(id)
@@ -124,7 +126,7 @@ def update_chapter(id):
   return jsonify(success=True, chapter=chapter.as_dict())
 
 
-@admin_bp.route('/chapters/<int:id>', methods=['DELETE'])
+@admin_bp.route('/delete-chapter/<int:id>', methods=['DELETE'])
 @roles_required('admin')
 def delete_chapter(id):
   chapter = Chapter.query.get_or_404(id)

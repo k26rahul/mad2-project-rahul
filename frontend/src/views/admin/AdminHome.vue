@@ -103,7 +103,7 @@ export default {
   methods: {
     async fetchSubjects() {
       try {
-        const result = await get('/api/admin/subjects');
+        const result = await get('/api/admin/get-subjects'); // Updated
         if (result.success) {
           this.subjects = result.subjects;
         }
@@ -122,7 +122,7 @@ export default {
       }
 
       try {
-        const result = await del(`/api/admin/subjects/${id}`);
+        const result = await del(`/api/admin/delete-subject/${id}`);
         if (result.success) {
           await this.fetchSubjects();
         }
@@ -141,7 +141,7 @@ export default {
       }
 
       try {
-        const result = await del(`/api/admin/chapters/${id}`);
+        const result = await del(`/api/admin/delete-chapter/${id}`);
         if (result.success) {
           await this.fetchSubjects();
         }
