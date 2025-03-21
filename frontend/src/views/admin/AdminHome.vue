@@ -79,7 +79,7 @@
 </template>
 
 <script>
-import { get } from '@/utils/fetchHelper';
+import { get, del } from '@/utils/fetchHelper';
 
 export default {
   data() {
@@ -87,28 +87,59 @@ export default {
       subjects: [],
     };
   },
+
   async created() {
-    try {
-      const result = await get('/api/admin/subjects');
-      if (result.success) {
-        this.subjects = result.subjects;
-      }
-    } catch (error) {
-      console.error('Failed to fetch subjects:', error);
-    }
+    await this.fetchSubjects();
   },
+
   methods: {
+    async fetchSubjects() {
+      try {
+        const result = await get('/api/admin/subjects');
+        if (result.success) {
+          this.subjects = result.subjects;
+        }
+      } catch (error) {
+        console.error('Failed to fetch subjects:', error);
+      }
+    },
+
     editSubject(id) {
       this.$router.push(`/admin/edit-subject/${id}`);
     },
-    deleteSubject(id) {
-      console.log('Delete subject:', id);
+
+    async deleteSubject(id) {
+      if (!confirm('Are you sure you want to delete this subject and all its chapters?')) {
+        return;
+      }
+
+      try {
+        const result = await del(`/api/admin/subjects/${id}`);
+        if (result.success) {
+          await this.fetchSubjects();
+        }
+      } catch (error) {
+        console.error('Failed to delete subject:', error);
+      }
     },
+
     editChapter(id) {
       this.$router.push(`/admin/edit-chapter/${id}`);
     },
-    deleteChapter(id) {
-      console.log('Delete chapter:', id);
+
+    async deleteChapter(id) {
+      if (!confirm('Are you sure you want to delete this chapter?')) {
+        return;
+      }
+
+      try {
+        const result = await del(`/api/admin/chapters/${id}`);
+        if (result.success) {
+          await this.fetchSubjects();
+        }
+      } catch (error) {
+        console.error('Failed to delete chapter:', error);
+      }
     },
   },
 };

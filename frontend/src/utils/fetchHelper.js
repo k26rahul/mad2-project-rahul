@@ -33,3 +33,15 @@ export async function post(apiPath, payload = {}) {
   console.log('POST', apiPath, status, data);
   return data;
 }
+
+export async function put(apiPath, payload = {}) {
+  const { data, status } = await fetchHelper('PUT', apiPath, payload);
+  console.log('PUT', apiPath, status, data);
+  return data;
+}
+
+export async function del(apiPath) {
+  const { data, status } = await fetchHelper('DELETE', apiPath);
+  console.log('DELETE', apiPath, status, data);
+  return data;
+}
