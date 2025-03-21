@@ -2,7 +2,9 @@
   <div>
     <header class="bg-primary text-white py-3 shadow-sm">
       <div class="container d-flex justify-content-between align-items-center">
-        <h1 class="h3 mb-0 fw-bold">Admin Dashboard</h1>
+        <RouterLink to="/admin/home" class="text-white text-decoration-none">
+          <h1 class="h3 mb-0 fw-bold">Admin Dashboard</h1>
+        </RouterLink>
         <nav>
           <ul class="nav">
             <li class="nav-item">
@@ -14,8 +16,8 @@
               >
             </li>
             <li class="nav-item">
-              <RouterLink to="/admin/search" class="nav-link text-white fw-semibold"
-                >Search</RouterLink
+              <RouterLink to="/admin/users" class="nav-link text-white fw-semibold"
+                >Users</RouterLink
               >
             </li>
             <li class="nav-item">

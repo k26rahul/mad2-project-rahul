@@ -39,8 +39,16 @@ const adminRoutes = [
         component: () => import('../views/admin/AdminHome.vue'),
       },
       {
+        path: 'quizzes',
+        component: () => import('../views/admin/AdminQuizzes.vue'),
+      },
+      {
         path: 'users',
         component: () => import('../views/admin/AdminUsers.vue'),
+      },
+      {
+        path: 'summary',
+        component: () => import('../views/admin/AdminSummary.vue'),
       },
       {
         path: 'new-subject',
