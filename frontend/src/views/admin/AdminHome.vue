@@ -69,13 +69,21 @@
                     <i class="bi bi-trash fs-5"></i>
                   </button>
                 </div>
+                <!-- End of chapter buttons/actions -->
               </div>
+              <!-- End of chapter list item -->
             </div>
+            <!-- End of chapters list -->
           </div>
+          <!-- End of card-body -->
         </div>
+        <!-- End of subject card -->
       </div>
+      <!-- End of subject column -->
     </div>
+    <!-- End of subjects grid -->
   </div>
+  <!-- End of container -->
 </template>
 
 <script>
