@@ -97,9 +97,12 @@ class Quiz(Base):
 
 class Question(Base):
   id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-  text: Mapped[str] = mapped_column(String(500), nullable=False)
-  options: Mapped[str] = mapped_column(String(1000), nullable=False)  # Store as JSON string
-  correct_answer: Mapped[int] = mapped_column(Integer, nullable=False)
+  statement: Mapped[str] = mapped_column(String(500), nullable=False)
+  option_a: Mapped[str] = mapped_column(String(255), nullable=False)
+  option_b: Mapped[str] = mapped_column(String(255), nullable=False)
+  option_c: Mapped[str] = mapped_column(String(255), nullable=False)
+  option_d: Mapped[str] = mapped_column(String(255), nullable=False)
+  correct_option: Mapped[int] = mapped_column(Integer, nullable=False)
   quiz_id: Mapped[int] = mapped_column(ForeignKey('quiz.id'))
   created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now())
 
