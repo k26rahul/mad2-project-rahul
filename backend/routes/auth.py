@@ -13,14 +13,16 @@ def whoami():
   if not current_user.is_authenticated:
     return jsonify(
         success=False,
-        message="You are not authenticated"
+        message="You are not authenticated",
+        is_authenticated=False
     ), 401
 
   return jsonify(
       success=True,
       email=current_user.email,
       role=current_user.roles[0].name,
-      message="You are authenticated"
+      message="You are authenticated",
+      is_authenticated=True
   )
 
 
@@ -57,10 +59,10 @@ def register():
   dob = data.get('dob')
   qualification = data.get('qualification')
 
-  if not all([name, email, password, dob]):
+  if not all([name, email, password]):
     return jsonify(
         success=False,
-        message="Some fields are missing"
+        message="Name, email and password are required"
     ), 400
 
   if User.query.filter_by(email=email).first():
@@ -73,19 +75,21 @@ def register():
       name=name,
       email=email,
       password=hash_password(password),
-      dob=datetime.strptime(dob, '%Y-%m-%d'),
+      dob=datetime.strptime(dob, '%Y-%m-%d') if dob else None,
       qualification=qualification,
       roles=[Role.query.filter_by(name="user").first()]
   )
   db.session.add(user)
   db.session.commit()
 
-  login_user(user)
+  login_user(user, remember=True)
 
   return jsonify(
       success=True,
       message="Registration successful",
-      role="user"
+      role="user",
+      name=name,
+      email=email
   )
 
 
