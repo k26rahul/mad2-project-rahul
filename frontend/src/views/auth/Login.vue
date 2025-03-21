@@ -1,24 +1,37 @@
 <template>
-  <div class="d-flex justify-content-center align-items-center" style="height: 100vh">
-    <div class="container p-4 border rounded" style="max-width: 400px">
-      <h1 class="mb-4 text-center">Login</h1>
+  <div class="d-flex justify-content-center align-items-center bg-light" style="height: 100vh">
+    <div class="container p-4 border-0 shadow-lg rounded-4 bg-white" style="max-width: 400px">
+      <h1 class="mb-4 text-center text-primary fw-bold">Login</h1>
       <form @submit.prevent="submitForm">
         <div class="mb-3">
-          <label for="email" class="form-label">Email address</label>
-          <input type="email" id="email" class="form-control" v-model="email" required />
+          <label for="email" class="form-label fw-semibold">Email address</label>
+          <input type="email" id="email" class="form-control shadow-sm" v-model="email" required />
         </div>
         <div class="mb-3">
-          <label for="password" class="form-label">Password</label>
-          <input type="password" id="password" class="form-control" v-model="password" required />
+          <label for="password" class="form-label fw-semibold">Password</label>
+          <input
+            type="password"
+            id="password"
+            class="form-control shadow-sm"
+            v-model="password"
+            required
+          />
         </div>
         <div class="form-check mb-3">
           <input type="checkbox" id="rememberMe" class="form-check-input" v-model="rememberMe" />
           <label for="rememberMe" class="form-check-label">Remember Me</label>
         </div>
-        <div v-if="errorMessage" class="alert alert-danger" role="alert">
+        <div v-if="errorMessage" class="alert alert-danger shadow-sm" role="alert">
           {{ errorMessage }}
         </div>
-        <button type="submit" class="btn btn-primary w-100">Login</button>
+        <button type="submit" class="btn btn-primary w-100 shadow-sm">Login</button>
+        <button
+          type="button"
+          class="btn btn-link w-100 mt-2 text-decoration-none"
+          @click="goToRegister"
+        >
+          Don't have an account? <span class="fw-semibold text-primary">Register</span>
+        </button>
       </form>
     </div>
   </div>
@@ -49,13 +62,16 @@ export default {
         if (result.success) {
           store.auth.isLoggedIn = true;
           store.auth.role = result.role;
-          router.push(result.role === 'admin' ? '/admin' : '/user');
+          router.push('/');
         } else {
           this.errorMessage = result.message;
         }
       } catch (error) {
         this.errorMessage = 'An error occurred. Please try again.';
       }
+    },
+    goToRegister() {
+      router.push('/register');
     },
   },
 };

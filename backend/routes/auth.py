@@ -1,8 +1,9 @@
 from flask import Blueprint, request, jsonify
-from flask_security.utils import verify_password, login_user
+from flask_security.utils import verify_password, login_user, hash_password
 from flask_security import current_user
-from db.models import User
+from db.models import db, Role, User
 from flask_security import logout_user
+from datetime import datetime
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -49,7 +50,43 @@ def login():
 
 @auth_bp.route('/register', methods=['POST'])
 def register():
-  return {"message": "Register route"}
+  data = request.get_json()
+  name = data.get('name')
+  email = data.get('email')
+  password = data.get('password')
+  dob = data.get('dob')
+  qualification = data.get('qualification')
+
+  if not all([name, email, password, dob]):
+    return jsonify(
+        success=False,
+        message="Some fields are missing"
+    ), 400
+
+  if User.query.filter_by(email=email).first():
+    return jsonify(
+        success=False,
+        message="Email is already registered"
+    ), 400
+
+  user = User(
+      name=name,
+      email=email,
+      password=hash_password(password),
+      dob=datetime.strptime(dob, '%Y-%m-%d'),
+      qualification=qualification,
+      roles=[Role.query.filter_by(name="user").first()]
+  )
+  db.session.add(user)
+  db.session.commit()
+
+  login_user(user)
+
+  return jsonify(
+      success=True,
+      message="Registration successful",
+      role="user"
+  )
 
 
 @auth_bp.route('/logout', methods=['POST'])

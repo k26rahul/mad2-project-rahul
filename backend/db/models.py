@@ -49,6 +49,9 @@ class User(Base, UserMixin):
   fs_uniquifier: Mapped[str] = mapped_column(
       String(255), unique=True, nullable=False, default=lambda: str(uuid.uuid4())
   )
+  name: Mapped[str] = mapped_column(String(100), nullable=False)
+  dob: Mapped[Optional[datetime]] = mapped_column(nullable=True)
+  qualification: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
 
   roles: Mapped[list['Role']] = relationship(
       "Role",
