@@ -133,3 +133,11 @@ def delete_chapter(id):
   db.session.delete(chapter)
   db.session.commit()
   return jsonify(success=True, message="Chapter deleted successfully")
+
+
+@admin_bp.route('/get-chapter/<int:id>', methods=['GET'])
+@roles_required('admin')
+def get_chapter(id):
+  chapter = Chapter.query.get_or_404(id)
+  chapter_dict = chapter.as_dict()
+  return jsonify(success=True, chapter=chapter_dict)

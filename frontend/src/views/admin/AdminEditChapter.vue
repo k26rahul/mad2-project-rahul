@@ -25,16 +25,9 @@ export default {
   },
   async created() {
     try {
-      const result = await get('/api/admin/subjects');
+      const result = await get(`/api/admin/get-chapter/${this.$route.params.id}`);
       if (result.success) {
-        const chapterId = parseInt(this.$route.params.id);
-        for (const subject of result.subjects) {
-          const chapter = subject.chapters.find(c => c.id === chapterId);
-          if (chapter) {
-            this.chapter = chapter;
-            break;
-          }
-        }
+        this.chapter = result.chapter;
       }
     } catch (error) {
       console.error('Failed to fetch chapter:', error);

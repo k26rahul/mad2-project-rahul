@@ -20,9 +20,9 @@ export default {
   },
   async created() {
     try {
-      const result = await get('/api/admin/subjects');
+      const result = await get(`/api/admin/get-subject/${this.$route.params.id}`);
       if (result.success) {
-        this.subject = result.subjects.find(s => s.id === parseInt(this.$route.params.id));
+        this.subject = result.subject;
       }
     } catch (error) {
       console.error('Failed to fetch subject:', error);
