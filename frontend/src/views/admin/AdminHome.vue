@@ -26,18 +26,14 @@
     </div>
 
     <!-- No results message -->
-    <div v-if="subjects.filter(s => subjectPass(s)).length === 0" class="text-center p-5">
+    <div v-if="subjects.filter(s => s.$matches).length === 0" class="text-center p-5">
       <h3 class="text-muted">No subjects found</h3>
       <p class="lead" v-if="subjects.length === 0">Start by adding a new subject</p>
     </div>
 
     <!-- Subjects grid -->
     <div class="row g-4 mb-4">
-      <div
-        v-for="subject in subjects.filter(s => subjectPass(s))"
-        :key="subject.id"
-        class="col-md-6"
-      >
+      <div v-for="subject in subjects.filter(s => s.$matches)" :key="subject.id" class="col-md-6">
         <div class="card border-0 shadow-lg rounded-4 h-100">
           <!-- Subject header -->
           <div class="card-header bg-primary bg-opacity-10 border-0 rounded-top-4">
@@ -75,9 +71,7 @@
             <!-- Chapters -->
             <div v-else class="list-group list-group-flush">
               <div
-                v-for="chapter in searchType === 'subject'
-                  ? subject.chapters
-                  : subject.chapters.filter(c => chapterPass(c))"
+                v-for="chapter in subject.chapters.filter(c => c.$matches)"
                 :key="chapter.id"
                 class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
               >
@@ -123,35 +117,56 @@ export default {
     };
   },
 
+  watch: {
+    searchQuery() {
+      this.updateSearchMatches();
+    },
+    searchType() {
+      this.updateSearchMatches();
+    },
+  },
+
   async created() {
     await this.fetchSubjects();
   },
 
   methods: {
-    subjectPass(subject) {
-      if (!this.searchQuery) return true;
-      if (this.searchType === 'subject') {
-        return (
-          matchQuery(subject.name, this.searchQuery) ||
-          (subject.description && matchQuery(subject.description, this.searchQuery))
-        );
+    updateSearchMatches() {
+      if (!this.searchQuery) {
+        // If no search query, everything matches
+        this.subjects.forEach(subject => {
+          subject.$matches = true;
+          if (subject.chapters) {
+            subject.chapters.forEach(chapter => (chapter.$matches = true));
+          }
+        });
+        return;
       }
-      return (
-        subject.chapters &&
-        subject.chapters.some(
-          chapter =>
-            matchQuery(chapter.name, this.searchQuery) ||
-            (chapter.description && matchQuery(chapter.description, this.searchQuery))
-        )
-      );
-    },
 
-    chapterPass(chapter) {
-      if (!this.searchQuery) return true;
-      return (
-        matchQuery(chapter.name, this.searchQuery) ||
-        (chapter.description && matchQuery(chapter.description, this.searchQuery))
-      );
+      if (this.searchType === 'subject') {
+        this.subjects.forEach(subject => {
+          subject.$matches =
+            matchQuery(subject.name, this.searchQuery) ||
+            matchQuery(subject.description, this.searchQuery);
+          if (subject.chapters) {
+            subject.chapters.forEach(chapter => (chapter.$matches = true));
+          }
+        });
+      } else {
+        this.subjects.forEach(subject => {
+          if (subject.chapters) {
+            subject.chapters.forEach(chapter => {
+              chapter.$matches =
+                matchQuery(chapter.name, this.searchQuery) ||
+                matchQuery(chapter.description, this.searchQuery);
+            });
+            // Subject matches if it has any matching chapters
+            subject.$matches = subject.chapters.some(chapter => chapter.$matches);
+          } else {
+            subject.$matches = false;
+          }
+        });
+      }
     },
 
     async fetchSubjects() {
@@ -159,6 +174,7 @@ export default {
         const result = await get('/api/subject/get-all');
         if (result.success) {
           this.subjects = result.subjects;
+          this.updateSearchMatches();
         }
       } catch (error) {
         console.error('Failed to fetch subjects:', error);
