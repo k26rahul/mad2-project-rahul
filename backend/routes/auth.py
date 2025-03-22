@@ -1,8 +1,7 @@
 from flask import Blueprint, request, jsonify
-from flask_security.utils import verify_password, login_user, hash_password
-from flask_security import current_user
+from flask_security import current_user, logout_user
+from flask_security.utils import login_user, verify_password, hash_password
 from db.models import db, Role, User
-from flask_security import logout_user
 from datetime import datetime
 
 auth_bp = Blueprint('auth', __name__)
@@ -14,15 +13,15 @@ def whoami():
     return jsonify(
         success=False,
         message="You are not authenticated",
-        is_authenticated=False
-    ), 401
+        is_authenticated=False,
+    ), 401  # UNAUTHORIZED
 
   return jsonify(
       success=True,
       email=current_user.email,
       role=current_user.roles[0].name,
       message="You are authenticated",
-      is_authenticated=True
+      is_authenticated=True,
   )
 
 
@@ -56,14 +55,14 @@ def register():
   name = data.get('name')
   email = data.get('email')
   password = data.get('password')
-  dob = data.get('dob')
-  qualification = data.get('qualification')
+  dob = data.get('dob')  # optional
+  qualification = data.get('qualification')  # optional
 
   if not all([name, email, password]):
     return jsonify(
         success=False,
         message="Name, email and password are required"
-    ), 400
+    ), 400  # BAD REQUEST
 
   if User.query.filter_by(email=email).first():
     return jsonify(
