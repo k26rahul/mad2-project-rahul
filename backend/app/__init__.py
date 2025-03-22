@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_cors import CORS
-from .config import Config
 from flask_security import Security, SQLAlchemyUserDatastore
+from .config import Config
 from db.models import db, User, Role
 from db.seed import seed_data
 
