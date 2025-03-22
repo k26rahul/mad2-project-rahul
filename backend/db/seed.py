@@ -1,7 +1,7 @@
 from flask_security.utils import hash_password
 from db.models import db, Role, User, Subject, Chapter, Quiz, Question
-from .data_subjects import seed_subjects
-from .data_quizzes import seed_quizzes
+from .data_subjects import data_subjects
+from .data_quizzes import data_quizzes
 
 
 def seed_data():
@@ -36,10 +36,9 @@ def seed_data():
     db.session.add(user)
     db.session.commit()
 
-  # Seed subjects and chapters if none exist
   if not Subject.query.first():
     print("Seeding subjects and chapters...")
-    for subject_data in seed_subjects:
+    for subject_data in data_subjects:
       subject = Subject(
           name=subject_data["name"],
           description=subject_data["description"]
@@ -57,10 +56,9 @@ def seed_data():
 
     db.session.commit()
 
-  # Seed quizzes and questions
   if not Quiz.query.first():
     print("Seeding quizzes and questions...")
-    for subject_name, chapters in seed_quizzes.items():
+    for subject_name, chapters in data_quizzes.items():
       subject = Subject.query.filter_by(name=subject_name).first()
       if not subject:
         continue

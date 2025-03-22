@@ -1,4 +1,4 @@
-seed_quizzes = {
+data_quizzes = {
     "Mathematics": {
         "Calculus": [{
             "title": "Basic Calculus Quiz",

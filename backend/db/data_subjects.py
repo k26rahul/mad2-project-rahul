@@ -1,4 +1,4 @@
-seed_subjects = [
+data_subjects = [
     {
         "name": "Mathematics",
         "description": "Advanced mathematics topics including calculus and algebra",
