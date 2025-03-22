@@ -31,10 +31,10 @@ def get_subjects():
 def create_subject():
   data = request.get_json()
   name = data.get('name')
-  description = data.get('description')
+  description = data.get('description')  # optional
 
   if not name:
-    return jsonify(success=False, message="Subject name is required"), 400
+    return jsonify(success=False, message="name is required; optional fields: description"), 400
 
   subject = Subject(
       name=name,

@@ -18,13 +18,13 @@ def get_chapter(id):
 def create_chapter():
   data = request.get_json()
   name = data.get('name')
-  description = data.get('description')
+  description = data.get('description')  # optional
   subject_id = data.get('subject_id')
 
   if not all([name, subject_id]):
     return jsonify(
         success=False,
-        message="Chapter name and subject_id are required"
+        message="name and subject_id are required; optional fields: description"
     ), 400
 
   subject = Subject.query.get(subject_id)

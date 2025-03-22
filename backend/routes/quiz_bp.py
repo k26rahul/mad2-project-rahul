@@ -34,13 +34,13 @@ def get_quizzes():
 def create_quiz():
   data = request.get_json()
   title = data.get('title')
-  description = data.get('description')
+  description = data.get('description')  # optional
   chapter_id = data.get('chapter_id')
-  start_time = data.get('start_time')
-  duration = data.get('duration')
+  start_time = data.get('start_time')  # optional
+  duration = data.get('duration')  # optional
 
   if not all([title, chapter_id]):
-    return jsonify(success=False, message="Quiz title and chapter_id are required"), 400
+    return jsonify(success=False, message="title and chapter_id are required; optional fields: description, start_time, duration"), 400
 
   chapter = Chapter.query.get(chapter_id)
   if not chapter:

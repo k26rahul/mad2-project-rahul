@@ -29,7 +29,7 @@ def create_question():
   quiz_id = data.get('quiz_id')
 
   if not all([statement, option_a, option_b, option_c, option_d, correct_option, quiz_id]):
-    return jsonify(success=False, message="All question fields are required"), 400
+    return jsonify(success=False, message="statement, option_a, option_b, option_c, option_d, correct_option, and quiz_id are required"), 400
 
   quiz = Quiz.query.get(quiz_id)
   if not quiz:

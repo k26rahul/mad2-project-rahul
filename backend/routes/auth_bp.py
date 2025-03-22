@@ -61,7 +61,7 @@ def register():
   if not all([name, email, password]):
     return jsonify(
         success=False,
-        message="Name, email and password are required"
+        message="name, email, and password are required; optional fields: dob, qualification"
     ), 400  # BAD REQUEST
 
   if User.query.filter_by(email=email).first():
