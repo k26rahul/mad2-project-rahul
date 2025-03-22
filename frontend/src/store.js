@@ -10,17 +10,17 @@ const store = reactive({
   },
 });
 
-// Restore state from local storage
-const localStorageState = JSON.parse(localStorage.getItem('store'));
-if (localStorageState) {
-  store.auth = { ...store.auth, ...localStorageState.auth };
+// Restore auth state from local storage
+const localStorageAuth = JSON.parse(localStorage.getItem('auth'));
+if (localStorageAuth) {
+  store.auth = { ...store.auth, ...localStorageAuth };
 }
 
-// Watch for changes and save to local storage
+// Watch for auth changes and save to local storage
 watch(
-  () => store,
-  newState => {
-    localStorage.setItem('store', JSON.stringify(newState));
+  () => store.auth,
+  newAuthState => {
+    localStorage.setItem('auth', JSON.stringify(newAuthState));
   },
   { deep: true }
 );
