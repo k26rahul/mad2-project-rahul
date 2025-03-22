@@ -1,8 +1,9 @@
 <template>
   <div class="container p-4 border-0 shadow-lg rounded-4 bg-white" style="max-width: 600px">
+    <h1 class="text-center mb-4">{{ isEdit ? 'Edit Subject' : 'Create New Subject' }}</h1>
     <form @submit.prevent="handleSubmit">
       <div class="mb-3">
-        <label for="name" class="form-label fw-semibold">Chapter Name</label>
+        <label for="name" class="form-label fw-semibold">Subject Name</label>
         <input
           type="text"
           id="name"
@@ -24,31 +25,17 @@
         {{ errorMessage }}
       </div>
       <button type="submit" class="btn btn-primary w-100 shadow-sm">
-        {{ isEdit ? 'Update Chapter' : 'Create Chapter' }}
+        {{ isEdit ? 'Update Subject' : 'Create Subject' }}
       </button>
     </form>
   </div>
 </template>
 
 <script>
-import { post, put } from '@/utils/fetchHelper';
+import { post, put, get } from '@/utils/fetchHelper';
 import router from '@/router';
 
 export default {
-  props: {
-    isEdit: {
-      type: Boolean,
-      default: false,
-    },
-    initialData: {
-      type: Object,
-      default: () => ({}),
-    },
-    subjectId: {
-      type: [Number, String],
-      required: true,
-    },
-  },
   data() {
     return {
       formData: {
@@ -56,11 +43,26 @@ export default {
         description: '',
       },
       errorMessage: '',
+      isEdit: false,
     };
   },
-  created() {
-    if (this.isEdit && this.initialData) {
-      this.formData = { ...this.initialData };
+  async created() {
+    const id = this.$route.params.id;
+    if (id) {
+      this.isEdit = true;
+      try {
+        const result = await get(`/api/subject/get/${id}`);
+        if (result.success) {
+          this.formData = {
+            name: result.subject.name,
+            description: result.subject.description,
+          };
+        } else {
+          this.errorMessage = result.message;
+        }
+      } catch (error) {
+        this.errorMessage = 'Failed to fetch subject data';
+      }
     }
   },
   methods: {
@@ -68,12 +70,9 @@ export default {
       try {
         let result;
         if (this.isEdit) {
-          result = await put(`/api/admin/update-chapter/${this.initialData.id}`, this.formData);
+          result = await put(`/api/subject/update/${this.$route.params.id}`, this.formData);
         } else {
-          result = await post('/api/admin/create-chapter', {
-            ...this.formData,
-            subject_id: this.subjectId,
-          });
+          result = await post('/api/subject/create', this.formData);
         }
 
         if (result.success) {

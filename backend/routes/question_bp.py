@@ -1,12 +1,12 @@
 from flask import Blueprint, jsonify, request
-from flask_security import roles_required
+from flask_security import roles_required, roles_accepted
 from db.models import db, Question, Quiz
 
 question_bp = Blueprint('question', __name__)
 
 
 @question_bp.route('/get/<int:id>', methods=['GET'])
-@roles_required('admin', 'user')
+@roles_accepted('admin', 'user')
 def get_question(id):
   question = Question.query.get_or_404(id)
   question_dict = question.as_dict()

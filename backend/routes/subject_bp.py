@@ -1,12 +1,12 @@
 from flask import Blueprint, jsonify, request
-from flask_security import roles_required, auth_required
+from flask_security import roles_required, roles_accepted
 from db.models import db, Subject
 
 subject_bp = Blueprint('subject', __name__)
 
 
 @subject_bp.route('/get/<int:id>', methods=['GET'])
-@roles_required('admin', 'user')
+@roles_accepted('admin', 'user')
 def get_subject(id):
   subject = Subject.query.get_or_404(id)
   subject_dict = subject.as_dict()
@@ -15,7 +15,7 @@ def get_subject(id):
 
 
 @subject_bp.route('/get-all', methods=['GET'])
-@roles_required('admin', 'user')
+@roles_accepted('admin', 'user')
 def get_subjects():
   subjects = Subject.query.all()
   result = []

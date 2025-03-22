@@ -145,6 +145,7 @@ export default {
         )
       );
     },
+
     chapterPass(chapter) {
       if (!this.searchQuery) return true;
       return (
@@ -152,9 +153,10 @@ export default {
         (chapter.description && matchQuery(chapter.description, this.searchQuery))
       );
     },
+
     async fetchSubjects() {
       try {
-        const result = await get('/api/admin/get-subjects');
+        const result = await get('/api/subject/get-all');
         if (result.success) {
           this.subjects = result.subjects;
         }
@@ -171,7 +173,7 @@ export default {
       if (!confirm('Are you sure you want to delete this subject and all its chapters?')) return;
 
       try {
-        const result = await del(`/api/admin/delete-subject/${id}`);
+        const result = await del(`/api/subject/delete/${id}`);
         if (result.success) await this.fetchSubjects();
       } catch (error) {
         console.error('Failed to delete subject:', error);
@@ -186,7 +188,7 @@ export default {
       if (!confirm('Are you sure you want to delete this chapter?')) return;
 
       try {
-        const result = await del(`/api/admin/delete-chapter/${id}`);
+        const result = await del(`/api/chapter/delete/${id}`);
         if (result.success) await this.fetchSubjects();
       } catch (error) {
         console.error('Failed to delete chapter:', error);

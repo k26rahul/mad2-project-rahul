@@ -25,35 +25,35 @@ export default [
       },
       {
         path: 'new-subject',
-        component: () => import('../views/admin/AdminNewSubject.vue'),
+        component: () => import('../views/admin/forms/AdminSubjectForm.vue'),
       },
       {
         path: 'edit-subject/:id',
-        component: () => import('../views/admin/AdminEditSubject.vue'),
+        component: () => import('../views/admin/forms/AdminSubjectForm.vue'),
       },
       {
         path: 'new-chapter/:subject_id',
-        component: () => import('../views/admin/AdminNewChapter.vue'),
+        component: () => import('../views/admin/forms/AdminChapterForm.vue'),
       },
       {
         path: 'edit-chapter/:id',
-        component: () => import('../views/admin/AdminEditChapter.vue'),
+        component: () => import('../views/admin/forms/AdminChapterForm.vue'),
       },
       {
         path: 'new-quiz/:chapter_id',
-        component: () => import('../views/admin/AdminNewQuiz.vue'),
+        component: () => import('../views/admin/forms/AdminQuizForm.vue'),
       },
       {
         path: 'edit-quiz/:id',
-        component: () => import('../views/admin/AdminEditQuiz.vue'),
+        component: () => import('../views/admin/forms/AdminQuizForm.vue'),
       },
       {
         path: 'new-question/:quiz_id',
-        component: () => import('../views/admin/AdminNewQuestion.vue'),
+        component: () => import('../views/admin/forms/AdminQuestionForm.vue'),
       },
       {
         path: 'edit-question/:id',
-        component: () => import('../views/admin/AdminEditQuestion.vue'),
+        component: () => import('../views/admin/forms/AdminQuestionForm.vue'),
       },
     ],
   },

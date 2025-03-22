@@ -1,12 +1,12 @@
 from flask import Blueprint, jsonify, request
-from flask_security import roles_required
+from flask_security import roles_required, roles_accepted
 from db.models import db, Quiz, Chapter
 
 quiz_bp = Blueprint('quiz', __name__)
 
 
 @quiz_bp.route('/get/<int:id>', methods=['GET'])
-@roles_required('admin', 'user')
+@roles_accepted('admin', 'user')
 def get_quiz(id):
   quiz = Quiz.query.get_or_404(id)
   quiz_dict = quiz.as_dict()
@@ -17,7 +17,7 @@ def get_quiz(id):
 
 
 @quiz_bp.route('/get-all', methods=['GET'])
-@roles_required('admin', 'user')
+@roles_accepted('admin', 'user')
 def get_quizzes():
   quizzes = Quiz.query.all()
   result = []
