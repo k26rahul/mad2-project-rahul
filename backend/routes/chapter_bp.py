@@ -6,7 +6,7 @@ chapter_bp = Blueprint('chapter', __name__)
 
 
 @chapter_bp.route('/get/<int:id>', methods=['GET'])
-@roles_required('admin')
+@roles_required('admin', 'user')
 def get_chapter(id):
   chapter = Chapter.query.get_or_404(id)
   chapter_dict = chapter.as_dict()

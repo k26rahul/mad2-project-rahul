@@ -6,7 +6,7 @@ question_bp = Blueprint('question', __name__)
 
 
 @question_bp.route('/get/<int:id>', methods=['GET'])
-@roles_required('admin')
+@roles_required('admin', 'user')
 def get_question(id):
   question = Question.query.get_or_404(id)
   question_dict = question.as_dict()
