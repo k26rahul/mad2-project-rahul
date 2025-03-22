@@ -8,6 +8,7 @@ from db.seed import seed_data
 from routes.auth import auth_bp
 from routes.admin import admin_bp
 from routes.user import user_bp
+from routes.common import common_bp
 
 user_datastore = SQLAlchemyUserDatastore(db, User, Role)
 
@@ -25,6 +26,7 @@ def create_app():
   app.register_blueprint(auth_bp, url_prefix='/api/auth')
   app.register_blueprint(admin_bp, url_prefix='/api/admin')
   app.register_blueprint(user_bp, url_prefix='/api/user')
+  app.register_blueprint(common_bp, url_prefix='/api/common')
 
   with app.app_context():
     db.create_all()
