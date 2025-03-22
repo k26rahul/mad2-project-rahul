@@ -5,7 +5,7 @@ from db.models import db, Subject
 subject_bp = Blueprint('subject', __name__)
 
 
-@subject_bp.route('/get-subject/<int:id>', methods=['GET'])
+@subject_bp.route('/get/<int:id>', methods=['GET'])
 @roles_required('admin')
 def get_subject(id):
   subject = Subject.query.get_or_404(id)
@@ -14,7 +14,7 @@ def get_subject(id):
   return jsonify(success=True, subject=subject_dict)
 
 
-@subject_bp.route('/get-subjects', methods=['GET'])
+@subject_bp.route('/get-all', methods=['GET'])
 @roles_required('admin')
 def get_subjects():
   subjects = Subject.query.all()
@@ -26,7 +26,7 @@ def get_subjects():
   return jsonify(success=True, subjects=result)
 
 
-@subject_bp.route('/create-subject', methods=['POST'])
+@subject_bp.route('/create', methods=['POST'])
 @roles_required('admin')
 def create_subject():
   data = request.get_json()
@@ -50,7 +50,7 @@ def create_subject():
   )
 
 
-@subject_bp.route('/update-subject/<int:id>', methods=['PUT'])
+@subject_bp.route('/update/<int:id>', methods=['PUT'])
 @roles_required('admin')
 def update_subject(id):
   subject = Subject.query.get_or_404(id)
@@ -63,7 +63,7 @@ def update_subject(id):
   return jsonify(success=True, subject=subject.as_dict())
 
 
-@subject_bp.route('/delete-subject/<int:id>', methods=['DELETE'])
+@subject_bp.route('/delete/<int:id>', methods=['DELETE'])
 @roles_required('admin')
 def delete_subject(id):
   subject = Subject.query.get_or_404(id)

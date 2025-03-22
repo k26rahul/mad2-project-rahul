@@ -5,7 +5,7 @@ from db.models import db, Quiz, Chapter
 quiz_bp = Blueprint('quiz', __name__)
 
 
-@quiz_bp.route('/get-quiz/<int:id>', methods=['GET'])
+@quiz_bp.route('/get/<int:id>', methods=['GET'])
 @roles_required('admin')
 def get_quiz(id):
   quiz = Quiz.query.get_or_404(id)
@@ -16,7 +16,7 @@ def get_quiz(id):
   return jsonify(success=True, quiz=quiz_dict)
 
 
-@quiz_bp.route('/get-quizzes', methods=['GET'])
+@quiz_bp.route('/get-all', methods=['GET'])
 @roles_required('admin')
 def get_quizzes():
   quizzes = Quiz.query.all()
@@ -29,7 +29,7 @@ def get_quizzes():
   return jsonify(success=True, quizzes=result)
 
 
-@quiz_bp.route('/create-quiz', methods=['POST'])
+@quiz_bp.route('/create', methods=['POST'])
 @roles_required('admin')
 def create_quiz():
   data = request.get_json()
@@ -59,7 +59,7 @@ def create_quiz():
   return jsonify(success=True, quiz=quiz.as_dict(), message="Quiz created successfully")
 
 
-@quiz_bp.route('/update-quiz/<int:id>', methods=['PUT'])
+@quiz_bp.route('/update/<int:id>', methods=['PUT'])
 @roles_required('admin')
 def update_quiz(id):
   quiz = Quiz.query.get_or_404(id)
@@ -74,7 +74,7 @@ def update_quiz(id):
   return jsonify(success=True, quiz=quiz.as_dict())
 
 
-@quiz_bp.route('/delete-quiz/<int:id>', methods=['DELETE'])
+@quiz_bp.route('/delete/<int:id>', methods=['DELETE'])
 @roles_required('admin')
 def delete_quiz(id):
   quiz = Quiz.query.get_or_404(id)

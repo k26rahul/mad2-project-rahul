@@ -5,7 +5,7 @@ from db.models import db, Chapter, Subject
 chapter_bp = Blueprint('chapter', __name__)
 
 
-@chapter_bp.route('/get-chapter/<int:id>', methods=['GET'])
+@chapter_bp.route('/get/<int:id>', methods=['GET'])
 @roles_required('admin')
 def get_chapter(id):
   chapter = Chapter.query.get_or_404(id)
@@ -13,7 +13,7 @@ def get_chapter(id):
   return jsonify(success=True, chapter=chapter_dict)
 
 
-@chapter_bp.route('/create-chapter', methods=['POST'])
+@chapter_bp.route('/create', methods=['POST'])
 @roles_required('admin')
 def create_chapter():
   data = request.get_json()
@@ -49,7 +49,7 @@ def create_chapter():
   )
 
 
-@chapter_bp.route('/update-chapter/<int:id>', methods=['PUT'])
+@chapter_bp.route('/update/<int:id>', methods=['PUT'])
 @roles_required('admin')
 def update_chapter(id):
   chapter = Chapter.query.get_or_404(id)
@@ -62,7 +62,7 @@ def update_chapter(id):
   return jsonify(success=True, chapter=chapter.as_dict())
 
 
-@chapter_bp.route('/delete-chapter/<int:id>', methods=['DELETE'])
+@chapter_bp.route('/delete/<int:id>', methods=['DELETE'])
 @roles_required('admin')
 def delete_chapter(id):
   chapter = Chapter.query.get_or_404(id)

@@ -5,7 +5,7 @@ from db.models import db, Question, Quiz
 question_bp = Blueprint('question', __name__)
 
 
-@question_bp.route('/get-question/<int:id>', methods=['GET'])
+@question_bp.route('/get/<int:id>', methods=['GET'])
 @roles_required('admin')
 def get_question(id):
   question = Question.query.get_or_404(id)
@@ -16,7 +16,7 @@ def get_question(id):
   return jsonify(success=True, question=question_dict)
 
 
-@question_bp.route('/create-question', methods=['POST'])
+@question_bp.route('/create', methods=['POST'])
 @roles_required('admin')
 def create_question():
   data = request.get_json()
@@ -50,7 +50,7 @@ def create_question():
   return jsonify(success=True, question=question.as_dict(), message="Question created successfully")
 
 
-@question_bp.route('/update-question/<int:id>', methods=['PUT'])
+@question_bp.route('/update/<int:id>', methods=['PUT'])
 @roles_required('admin')
 def update_question(id):
   question = Question.query.get_or_404(id)
@@ -67,7 +67,7 @@ def update_question(id):
   return jsonify(success=True, question=question.as_dict())
 
 
-@question_bp.route('/delete-question/<int:id>', methods=['DELETE'])
+@question_bp.route('/delete/<int:id>', methods=['DELETE'])
 @roles_required('admin')
 def delete_question(id):
   question = Question.query.get_or_404(id)
