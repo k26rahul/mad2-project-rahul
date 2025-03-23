@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask_security import roles_required, roles_accepted
 from db.models import db, Quiz, Chapter
+from datetime import datetime
 
 quiz_bp = Blueprint('quiz', __name__)
 
@@ -25,6 +26,7 @@ def get_quizzes():
     quiz_dict = quiz.as_dict()
     quiz_dict['chapter_name'] = quiz.chapter.name
     quiz_dict['subject_name'] = quiz.chapter.subject.name
+    quiz_dict['questions'] = [q.as_dict() for q in quiz.questions]
     result.append(quiz_dict)
   return jsonify(success=True, quizzes=result)
 
@@ -34,9 +36,9 @@ def get_quizzes():
 def create_quiz():
   data = request.get_json()
   title = data.get('title')
-  description = data.get('description')  # optional
   chapter_id = data.get('chapter_id')
-  start_time = data.get('start_time')  # optional
+  description = data.get('description')  # optional
+  start_time = datetime.fromisoformat(data.get('start_time')) if data.get('start_time') else None  # optional
   duration = data.get('duration')  # optional
 
   if not all([title, chapter_id]):

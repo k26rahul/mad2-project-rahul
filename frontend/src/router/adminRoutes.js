@@ -40,7 +40,7 @@ export default [
         component: () => import('../views/admin/forms/AdminChapterForm.vue'),
       },
       {
-        path: 'new-quiz/:chapter_id',
+        path: 'new-quiz',
         component: () => import('../views/admin/forms/AdminQuizForm.vue'),
       },
       {
