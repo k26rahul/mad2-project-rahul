@@ -56,7 +56,11 @@ def create():
   db.session.add(quiz)
   db.session.commit()
 
-  return jsonify(success=True, quiz=quiz.as_dict(), message="Quiz created successfully")
+  return jsonify(
+      success=True,
+      quiz=_construct_quiz_dict(quiz),
+      message="Quiz created successfully"
+  )
 
 
 @quiz_bp.route('/update/<int:id>', methods=['PUT'])
@@ -67,11 +71,12 @@ def update(id):
 
   quiz.title = data.get('title', quiz.title)
   quiz.description = data.get('description', quiz.description)
-  quiz.start_time = data.get('start_time', quiz.start_time)
+  start_time = data.get('start_time')
+  quiz.start_time = datetime.fromisoformat(start_time) if start_time else quiz.start_time
   quiz.duration = data.get('duration', quiz.duration)
 
   db.session.commit()
-  return jsonify(success=True, quiz=quiz.as_dict(), message="Quiz updated successfully")
+  return jsonify(success=True, quiz=_construct_quiz_dict(quiz), message="Quiz updated successfully")
 
 
 @quiz_bp.route('/delete/<int:id>', methods=['DELETE'])

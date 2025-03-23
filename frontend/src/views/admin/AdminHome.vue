@@ -26,14 +26,14 @@
     </div>
 
     <!-- No results message -->
-    <div v-if="subjects.filter(s => s.$matches).length === 0" class="text-center p-5">
+    <div v-if="filteredSubjects.length === 0" class="text-center p-5">
       <h3 class="text-muted">No subjects found</h3>
       <p class="lead" v-if="subjects.length === 0">Start by adding a new subject</p>
     </div>
 
     <!-- Subjects grid -->
     <div class="row g-4 mb-4">
-      <div v-for="subject in subjects.filter(s => s.$matches)" :key="subject.id" class="col-md-6">
+      <div v-for="subject in filteredSubjects" :key="subject.id" class="col-md-6">
         <div class="card border-0 shadow-lg rounded-4 h-100">
           <!-- Subject header -->
           <div class="card-header bg-primary bg-opacity-10 border-0 rounded-top-4">
@@ -64,14 +64,14 @@
             </div>
 
             <!-- No chapters message -->
-            <div v-if="!(subject.chapters && subject.chapters.length)" class="text-center p-3">
+            <div v-if="!subjectStore.getChaptersForSubject(subject).length" class="text-center p-3">
               <p class="text-muted mb-0">No chapters yet</p>
             </div>
 
             <!-- Chapters -->
             <div v-else class="list-group list-group-flush">
               <div
-                v-for="chapter in subject.chapters.filter(c => c.$matches)"
+                v-for="chapter in filteredChaptersForSubject(subject)"
                 :key="chapter.id"
                 class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
               >
@@ -105,7 +105,7 @@
 </template>
 
 <script>
-import { subjectStore } from '@/store';
+import { subjectStore, chapterStore } from '@/store';
 import { matchQuery } from '@/utils/searchUtil';
 
 export default {
@@ -113,13 +113,9 @@ export default {
     return {
       searchQuery: '',
       searchType: 'subject',
+      matchingItems: new Set(),
+      subjectStore,
     };
-  },
-
-  computed: {
-    subjects() {
-      return subjectStore.subjects;
-    },
   },
 
   watch: {
@@ -131,44 +127,56 @@ export default {
     },
   },
 
-  async created() {
-    await subjectStore.init();
+  computed: {
+    subjects() {
+      return Array.from(subjectStore.subjects.values());
+    },
+    filteredSubjects() {
+      return this.searchQuery
+        ? this.subjects.filter(s => this.matchingItems.has(s))
+        : this.subjects;
+    },
   },
 
   methods: {
+    filteredChaptersForSubject(subject) {
+      const chapters = subjectStore.getChaptersForSubject(subject);
+      return this.searchQuery && this.searchType === 'chapter'
+        ? chapters.filter(c => this.matchingItems.has(c))
+        : chapters;
+    },
+
     updateSearchMatches() {
-      if (!this.searchQuery) {
-        // If no search query, everything matches
-        this.subjects.forEach(subject => {
-          subject.$matches = true;
-          if (subject.chapters) {
-            subject.chapters.forEach(chapter => (chapter.$matches = true));
-          }
-        });
-        return;
-      }
+      this.matchingItems.clear();
+
+      if (!this.searchQuery) return;
 
       if (this.searchType === 'subject') {
         this.subjects.forEach(subject => {
-          subject.$matches =
+          if (
             matchQuery(subject.name, this.searchQuery) ||
-            matchQuery(subject.description, this.searchQuery);
-          if (subject.chapters) {
-            subject.chapters.forEach(chapter => (chapter.$matches = true));
+            matchQuery(subject.description, this.searchQuery)
+          ) {
+            this.matchingItems.add(subject);
           }
         });
       } else {
         this.subjects.forEach(subject => {
-          if (subject.chapters) {
-            subject.chapters.forEach(chapter => {
-              chapter.$matches =
-                matchQuery(chapter.name, this.searchQuery) ||
-                matchQuery(chapter.description, this.searchQuery);
-            });
-            // Subject matches if it has any matching chapters
-            subject.$matches = subject.chapters.some(chapter => chapter.$matches);
-          } else {
-            subject.$matches = false;
+          const chapters = subjectStore.getChaptersForSubject(subject);
+          let hasMatchingChapter = false;
+
+          chapters.forEach(chapter => {
+            if (
+              matchQuery(chapter.name, this.searchQuery) ||
+              matchQuery(chapter.description, this.searchQuery)
+            ) {
+              this.matchingItems.add(chapter);
+              hasMatchingChapter = true;
+            }
+          });
+
+          if (hasMatchingChapter) {
+            this.matchingItems.add(subject);
           }
         });
       }
@@ -189,7 +197,7 @@ export default {
 
     async deleteChapter(id) {
       if (!confirm('Are you sure you want to delete this chapter?')) return;
-      await store.chapters.delete(id);
+      await chapterStore.delete(id);
     },
   },
 };

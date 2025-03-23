@@ -1,42 +1,49 @@
 import { get, post, put, del } from '@/utils/fetchHelper';
 import { reactive } from 'vue';
+import { quizStore } from '@/store';
 
-export default reactive({
-  questions: {},
-  initialFetchCompleted: false,
-
-  async initialFetchAll() {
-    if (!this.initialFetchCompleted) {
-      await this.fetchAll();
-      this.initialFetchCompleted = true;
-    }
-  },
+const store = reactive({
+  questions: new Map(),
 
   async fetch(id) {
-    const result = await get(`/api/question/get/${id}`);
-    this.questions[id] = result.question;
+    id = parseInt(id);
+    const { question } = await get(`/api/question/get/${id}`);
+    if (this.questions.has(id)) {
+      Object.assign(this.questions.get(id), question);
+    } else {
+      this.questions.set(id, question);
+    }
+    return this.questions.get(id);
   },
 
   async fetchAll() {
-    const result = await get('/api/question/get-all');
-    this.questions = {};
-    result.questions.forEach(question => {
-      this.questions[question.id] = question;
+    const { questions } = await get('/api/question/get-all');
+    questions.forEach(question => {
+      if (this.questions.has(question.id)) {
+        Object.assign(this.questions.get(question.id), question);
+      } else {
+        this.questions.set(question.id, question);
+      }
     });
+    return this.questions;
   },
 
   async create(data) {
-    const result = await post('/api/question/create', data);
-    this.questions[result.question.id] = result.question;
+    const { question } = await post('/api/question/create', data);
+    this.questions.set(question.id, question);
+    quizStore.fetch(question.quiz_id);
   },
 
   async update(id, data) {
-    const result = await put(`/api/question/update/${id}`, data);
-    this.questions[id] = result.question;
+    id = parseInt(id);
+    const { question } = await put(`/api/question/update/${id}`, data);
+    Object.assign(this.questions.get(id), question);
   },
 
   async delete(id) {
     await del(`/api/question/delete/${id}`);
-    delete this.questions[id];
+    this.questions.delete(id);
   },
 });
+
+export default store;

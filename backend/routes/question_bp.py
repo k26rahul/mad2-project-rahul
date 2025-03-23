@@ -59,7 +59,11 @@ def create():
   db.session.add(question)
   db.session.commit()
 
-  return jsonify(success=True, question=question.as_dict(), message="Question created successfully")
+  return jsonify(
+      success=True,
+      question=_construct_question_dict(question),
+      message="Question created successfully"
+  )
 
 
 @question_bp.route('/update/<int:id>', methods=['PUT'])
@@ -76,7 +80,7 @@ def update(id):
   question.correct_option = data.get('correct_option', question.correct_option)
 
   db.session.commit()
-  return jsonify(success=True, question=question.as_dict(), message="Question updated successfully")
+  return jsonify(success=True, question=_construct_question_dict(question), message="Question updated successfully")
 
 
 @question_bp.route('/delete/<int:id>', methods=['DELETE'])

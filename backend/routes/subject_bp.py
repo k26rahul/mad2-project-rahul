@@ -45,7 +45,7 @@ def create():
 
   return jsonify(
       success=True,
-      subject=subject.as_dict(),
+      subject=_construct_subject_dict(subject),
       message="Subject created successfully"
   )
 
@@ -60,7 +60,7 @@ def update(id):
   subject.description = data.get('description', subject.description)
 
   db.session.commit()
-  return jsonify(success=True, subject=subject.as_dict(), message="Subject updated successfully")
+  return jsonify(success=True, subject=_construct_subject_dict(subject), message="Subject updated successfully")
 
 
 @subject_bp.route('/delete/<int:id>', methods=['DELETE'])

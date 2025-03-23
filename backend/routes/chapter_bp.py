@@ -57,7 +57,7 @@ def create():
 
   return jsonify(
       success=True,
-      chapter=chapter.as_dict(),
+      chapter=_construct_chapter_dict(chapter),
       message="Chapter created successfully"
   )
 
@@ -72,7 +72,7 @@ def update(id):
   chapter.description = data.get('description', chapter.description)
 
   db.session.commit()
-  return jsonify(success=True, chapter=chapter.as_dict(), message="Chapter updated successfully")
+  return jsonify(success=True, chapter=_construct_chapter_dict(chapter), message="Chapter updated successfully")
 
 
 @chapter_bp.route('/delete/<int:id>', methods=['DELETE'])

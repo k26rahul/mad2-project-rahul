@@ -30,11 +30,44 @@
       </div>
     </header>
     <main class="container mt-4">
-      <RouterView></RouterView>
+      <div
+        v-if="loading"
+        class="d-flex justify-content-center align-items-center"
+        style="height: 80vh"
+      >
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
+      <div v-else>
+        <RouterView></RouterView>
+      </div>
     </main>
   </div>
 </template>
 
-<script setup>
+<script>
 import { RouterLink, RouterView } from 'vue-router';
+import { subjectStore, quizStore, questionStore, chapterStore } from '@/store';
+
+export default {
+  components: {
+    RouterLink,
+    RouterView,
+  },
+  data() {
+    return {
+      loading: true,
+    };
+  },
+  async created() {
+    await Promise.all([
+      subjectStore.fetchAll(),
+      quizStore.fetchAll(),
+      questionStore.fetchAll(),
+      chapterStore.fetchAll(),
+    ]);
+    this.loading = false;
+  },
+};
 </script>

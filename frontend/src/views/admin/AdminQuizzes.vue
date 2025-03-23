@@ -27,14 +27,14 @@
     </div>
 
     <!-- No quizzes message -->
-    <div v-if="quizzes.filter(q => q.$matches).length === 0" class="text-center p-5">
+    <div v-if="filteredQuizzes.length === 0" class="text-center p-5">
       <h3 class="text-muted">No quizzes found</h3>
       <p class="lead" v-if="quizzes.length === 0">Start by adding a new quiz</p>
     </div>
 
     <!-- Quizzes grid -->
     <div class="row g-4 mb-4">
-      <div v-for="quiz in quizzes.filter(q => q.$matches)" :key="quiz.id" class="col-md-6">
+      <div v-for="quiz in filteredQuizzes" :key="quiz.id" class="col-md-6">
         <div class="card border-0 shadow-lg rounded-4 h-100">
           <!-- Quiz header -->
           <div class="card-header bg-primary bg-opacity-10 border-0 rounded-top-4">
@@ -55,13 +55,13 @@
                 <i class="bi bi-journal me-1"></i>
                 {{ quiz.chapter_name }} ({{ quiz.subject_name }})
               </small>
-              <small class="text-secondary" v-if="quiz.duration">
+              <small class="text-secondary">
                 <i class="bi bi-clock me-1"></i>
-                {{ quiz.duration }} minutes
+                {{ quiz.duration ? `${quiz.duration} minutes` : 'NA' }}
               </small>
-              <small class="text-secondary" v-if="quiz.start_time">
+              <small class="text-secondary">
                 <i class="bi bi-calendar me-1"></i>
-                {{ new Date(quiz.start_time).toLocaleString() }}
+                {{ quiz.start_time ? new Date(quiz.start_time).toLocaleString() : 'NA' }}
               </small>
             </div>
           </div>
@@ -86,7 +86,7 @@
             <!-- Questions -->
             <div v-else class="list-group list-group-flush">
               <div
-                v-for="question in quiz.questions"
+                v-for="question in quizStore.getQuestionsForQuiz(quiz)"
                 :key="question.id"
                 class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
               >
@@ -117,34 +117,44 @@
 </template>
 
 <script>
-import store from '@/store/store/store';
+import { subjectStore, chapterStore, quizStore, questionStore } from '@/store';
 
 export default {
   data() {
     return {
       selectedSubjectId: 'all',
       selectedChapterId: 'all',
+      matchingQuizzes: new Set(),
+      quizStore,
     };
   },
 
   computed: {
     subjects() {
-      return store.subjects;
+      return Array.from(subjectStore.subjects.values());
+    },
+    chapters() {
+      return Array.from(chapterStore.chapters.values());
     },
     quizzes() {
-      return store.quizzes;
+      return Array.from(quizStore.quizzes.values());
     },
     availableChapters() {
       if (this.selectedSubjectId === 'all') {
-        return this.subjects.flatMap(s => s.chapters);
+        return this.chapters;
       }
-      const subject = this.subjects.find(s => s.id === this.selectedSubjectId);
-      return subject ? subject.chapters : [];
+      return this.chapters.filter(c => c.subject_id === parseInt(this.selectedSubjectId));
+    },
+    filteredQuizzes() {
+      if (this.selectedSubjectId === 'all' && this.selectedChapterId === 'all') {
+        return this.quizzes;
+      }
+      return this.quizzes.filter(q => this.matchingQuizzes.has(q));
     },
   },
 
   watch: {
-    selectedSubjectId(newVal) {
+    selectedSubjectId() {
       this.selectedChapterId = 'all';
       this.updateQuizMatches();
     },
@@ -153,24 +163,23 @@ export default {
     },
   },
 
-  async created() {
-    await Promise.all([store.subjects.fetchAll(), store.quizzes.fetchAll()]);
-    this.updateQuizMatches();
-  },
-
   methods: {
     updateQuizMatches() {
+      this.matchingQuizzes.clear();
+
       this.quizzes.forEach(quiz => {
+        const chapter = chapterStore.chapters.get(quiz.chapter_id);
+
         const matchesSubject =
           this.selectedSubjectId === 'all' ||
-          this.subjects.some(
-            s => s.id === this.selectedSubjectId && s.chapters.some(c => c.id === quiz.chapter_id)
-          );
+          chapter.subject_id === parseInt(this.selectedSubjectId);
 
         const matchesChapter =
-          this.selectedChapterId === 'all' || quiz.chapter_id === this.selectedChapterId;
+          this.selectedChapterId === 'all' || quiz.chapter_id === parseInt(this.selectedChapterId);
 
-        quiz.$matches = matchesSubject && matchesChapter;
+        if (matchesSubject && matchesChapter) {
+          this.matchingQuizzes.add(quiz);
+        }
       });
     },
 
@@ -180,7 +189,7 @@ export default {
 
     async deleteQuiz(id) {
       if (!confirm('Are you sure you want to delete this quiz and all its questions?')) return;
-      await store.quizzes.delete(id);
+      await quizStore.delete(id);
     },
 
     editQuestion(id) {
@@ -189,7 +198,7 @@ export default {
 
     async deleteQuestion(id) {
       if (!confirm('Are you sure you want to delete this question?')) return;
-      await store.questions.delete(id);
+      await questionStore.delete(id);
     },
   },
 };

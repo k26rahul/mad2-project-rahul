@@ -1,42 +1,52 @@
 import { get, post, put, del } from '@/utils/fetchHelper';
 import { reactive } from 'vue';
+import questionStore from './questionStore';
 
-export default reactive({
-  quizzes: {},
-  initialFetchCompleted: false,
-
-  async initialFetchAll() {
-    if (!this.initialFetchCompleted) {
-      await this.fetchAll();
-      this.initialFetchCompleted = true;
-    }
-  },
+const store = reactive({
+  quizzes: new Map(),
 
   async fetch(id) {
-    const result = await get(`/api/quiz/get/${id}`);
-    this.quizzes[id] = result.quiz;
+    id = parseInt(id);
+    const { quiz } = await get(`/api/quiz/get/${id}`);
+    if (this.quizzes.has(id)) {
+      Object.assign(this.quizzes.get(id), quiz);
+    } else {
+      this.quizzes.set(id, quiz);
+    }
+    return this.quizzes.get(id);
   },
 
   async fetchAll() {
-    const result = await get('/api/quiz/get-all');
-    this.quizzes = {};
-    result.quizzes.forEach(quiz => {
-      this.quizzes[quiz.id] = quiz;
+    const { quizzes } = await get('/api/quiz/get-all');
+    quizzes.forEach(quiz => {
+      if (this.quizzes.has(quiz.id)) {
+        Object.assign(this.quizzes.get(quiz.id), quiz);
+      } else {
+        this.quizzes.set(quiz.id, quiz);
+      }
     });
+    return this.quizzes;
   },
 
   async create(data) {
-    const result = await post('/api/quiz/create', data);
-    this.quizzes[result.quiz.id] = result.quiz;
+    const { quiz } = await post('/api/quiz/create', data);
+    this.quizzes.set(quiz.id, quiz);
   },
 
   async update(id, data) {
-    const result = await put(`/api/quiz/update/${id}`, data);
-    this.quizzes[id] = result.quiz;
+    id = parseInt(id);
+    const { quiz } = await put(`/api/quiz/update/${id}`, data);
+    Object.assign(this.quizzes.get(id), quiz);
   },
 
   async delete(id) {
     await del(`/api/quiz/delete/${id}`);
-    delete this.quizzes[id];
+    this.quizzes.delete(id);
+  },
+
+  getQuestionsForQuiz(quiz) {
+    return quiz.questions.map(qId => questionStore.questions.get(qId)).filter(q => q !== undefined);
   },
 });
+
+export default store;

@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import store from '@/store/store/store';
+import { quizStore, subjectStore } from '@/store';
 import router from '@/router';
 
 export default {
@@ -74,70 +74,47 @@ export default {
       },
       selectedSubject: null,
       errorMessage: '',
-      isEdit: false,
     };
   },
-
   computed: {
     subjects() {
-      return store.subjects;
+      return Array.from(subjectStore.subjects.values());
     },
     chapters() {
-      return this.selectedSubject ? this.selectedSubject.chapters || [] : [];
+      return this.selectedSubject ? subjectStore.getChaptersForSubject(this.selectedSubject) : [];
+    },
+    isEdit() {
+      return this.$route.name === 'AdminQuizEdit';
     },
   },
-
   async created() {
-    await store.subjects.fetchAll();
-    const id = this.$route.params.id;
-    if (id) {
-      this.isEdit = true;
-      await this.loadQuizData(id);
+    if (this.isEdit) {
+      const id = this.$route.params.id;
+      const quiz = quizStore.quizzes.get(parseInt(id));
+      if (quiz) {
+        this.formData = {
+          title: quiz.title,
+          description: quiz.description,
+          chapter_id: quiz.chapter_id,
+          start_time: quiz.start_time ? quiz.start_time : '',
+          duration: quiz.duration,
+        };
+        this.selectedSubject = this.subjects.find(s => s.chapters.includes(quiz.chapter_id));
+      }
     }
   },
-
   methods: {
-    async loadQuizData(id) {
-      try {
-        const result = await store.quizzes.get(id);
-        if (result.success) {
-          const formattedDate = result.quiz.start_time
-            ? new Date(result.quiz.start_time).toISOString().slice(0, 16)
-            : '';
-
-          this.formData = {
-            title: result.quiz.title,
-            description: result.quiz.description,
-            chapter_id: result.quiz.chapter_id,
-            start_time: formattedDate,
-            duration: result.quiz.duration,
-          };
-
-          this.selectedSubject = this.subjects.find(s =>
-            s.chapters.some(c => c.id === result.quiz.chapter_id)
-          );
-        }
-      } catch (error) {
-        this.errorMessage = 'Failed to load quiz data';
-      }
-    },
-
     async handleSubmit() {
       try {
-        let result;
         if (this.isEdit) {
-          result = await store.quizzes.update(this.$route.params.id, this.formData);
+          await quizStore.update(this.$route.params.id, this.formData);
         } else {
-          result = await store.quizzes.create(this.formData);
+          await quizStore.create(this.formData);
         }
-
-        if (result.success) {
-          router.push('/admin/quizzes');
-        } else {
-          this.errorMessage = result.message;
-        }
+        router.push('/admin/quizzes');
       } catch (error) {
-        this.errorMessage = 'An error occurred. Please try again.';
+        console.error(error);
+        this.errorMessage = 'An error occurred while submitting the form.';
       }
     },
   },

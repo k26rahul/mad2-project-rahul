@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import store from '@/store/store/store';
+import { subjectStore } from '@/store';
 import router from '@/router';
 
 export default {
@@ -43,45 +43,39 @@ export default {
         description: '',
       },
       errorMessage: '',
-      isEdit: false,
     };
   },
+
+  computed: {
+    isEdit() {
+      return this.$route.name === 'AdminSubjectEdit';
+    },
+  },
+
   async created() {
-    const id = this.$route.params.id;
-    if (id) {
-      this.isEdit = true;
-      try {
-        const result = await store.subjects.get(id);
-        if (result.success) {
-          this.formData = {
-            name: result.subject.name,
-            description: result.subject.description,
-          };
-        } else {
-          this.errorMessage = result.message;
-        }
-      } catch (error) {
-        this.errorMessage = 'Failed to fetch subject data';
+    if (this.isEdit) {
+      const id = this.$route.params.id;
+      const subject = subjectStore.subjects.get(parseInt(id));
+      if (subject) {
+        this.formData = {
+          name: subject.name,
+          description: subject.description,
+        };
       }
     }
   },
+
   methods: {
     async handleSubmit() {
       try {
-        let result;
         if (this.isEdit) {
-          result = await store.subjects.update(this.$route.params.id, this.formData);
+          await subjectStore.update(this.$route.params.id, this.formData);
         } else {
-          result = await store.subjects.create(this.formData);
+          await subjectStore.create(this.formData);
         }
-
-        if (result.success) {
-          router.push('/admin/home');
-        } else {
-          this.errorMessage = result.message;
-        }
+        router.push('/admin/home');
       } catch (error) {
-        this.errorMessage = 'An error occurred. Please try again.';
+        this.errorMessage = 'An error occurred while processing your request.';
       }
     },
   },

@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import store from '@/store/store/store';
+import chapterStore from '@/store/chapterStore';
 import router from '@/router';
 
 export default {
@@ -44,50 +44,42 @@ export default {
         subject_id: null,
       },
       errorMessage: '',
-      isEdit: false,
     };
   },
+  computed: {
+    isEdit() {
+      return this.$route.name === 'AdminChapterEdit';
+    },
+  },
   async created() {
-    const id = this.$route.params.id;
     const subject_id = this.$route.params.subject_id;
-
-    if (id) {
-      this.isEdit = true;
-      try {
-        const result = await store.chapters.get(id);
-        if (result.success) {
-          this.formData = {
-            name: result.chapter.name,
-            description: result.chapter.description,
-            subject_id: result.chapter.subject_id,
-          };
-        } else {
-          this.errorMessage = result.message;
-        }
-      } catch (error) {
-        this.errorMessage = 'Failed to fetch chapter data';
-      }
-    } else if (subject_id) {
+    if (subject_id) {
       this.formData.subject_id = parseInt(subject_id);
+    }
+
+    if (this.isEdit) {
+      const id = this.$route.params.id;
+      const chapter = chapterStore.chapters.get(parseInt(id));
+      if (chapter) {
+        this.formData = {
+          name: chapter.name,
+          description: chapter.description,
+          subject_id: chapter.subject_id,
+        };
+      }
     }
   },
   methods: {
     async handleSubmit() {
       try {
-        let result;
         if (this.isEdit) {
-          result = await store.chapters.update(this.$route.params.id, this.formData);
+          await chapterStore.update(this.$route.params.id, this.formData);
         } else {
-          result = await store.chapters.create(this.formData);
+          await chapterStore.create(this.formData);
         }
-
-        if (result.success) {
-          router.push('/admin/home');
-        } else {
-          this.errorMessage = result.message;
-        }
+        router.push('/admin/home');
       } catch (error) {
-        this.errorMessage = 'An error occurred. Please try again.';
+        this.errorMessage = 'An error occurred while submitting the form.';
       }
     },
   },

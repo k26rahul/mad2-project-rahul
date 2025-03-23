@@ -1,42 +1,49 @@
 import { get, post, put, del } from '@/utils/fetchHelper';
 import { reactive } from 'vue';
+import { subjectStore } from '@/store';
 
-export default reactive({
-  chapters: {},
-  initialFetchCompleted: false,
-
-  async initialFetchAll() {
-    if (!this.initialFetchCompleted) {
-      await this.fetchAll();
-      this.initialFetchCompleted = true;
-    }
-  },
+const store = reactive({
+  chapters: new Map(),
 
   async fetch(id) {
-    const result = await get(`/api/chapter/get/${id}`);
-    this.chapters[id] = result.chapter;
+    id = parseInt(id);
+    const { chapter } = await get(`/api/chapter/get/${id}`);
+    if (this.chapters.has(id)) {
+      Object.assign(this.chapters.get(id), chapter);
+    } else {
+      this.chapters.set(id, chapter);
+    }
+    return this.chapters.get(id);
   },
 
   async fetchAll() {
-    const result = await get('/api/chapter/get-all');
-    this.chapters = {};
-    result.chapters.forEach(chapter => {
-      this.chapters[chapter.id] = chapter;
+    const { chapters } = await get('/api/chapter/get-all');
+    chapters.forEach(chapter => {
+      if (this.chapters.has(chapter.id)) {
+        Object.assign(this.chapters.get(chapter.id), chapter);
+      } else {
+        this.chapters.set(chapter.id, chapter);
+      }
     });
+    return this.chapters;
   },
 
   async create(data) {
-    const result = await post('/api/chapter/create', data);
-    this.chapters[result.chapter.id] = result.chapter;
+    const { chapter } = await post('/api/chapter/create', data);
+    this.chapters.set(chapter.id, chapter);
+    subjectStore.fetch(chapter.subject_id);
   },
 
   async update(id, data) {
-    const result = await put(`/api/chapter/update/${id}`, data);
-    this.chapters[id] = result.chapter;
+    id = parseInt(id);
+    const { chapter } = await put(`/api/chapter/update/${id}`, data);
+    Object.assign(this.chapters.get(id), chapter);
   },
 
   async delete(id) {
     await del(`/api/chapter/delete/${id}`);
-    delete this.chapters[id];
+    this.chapters.delete(id);
   },
 });
+
+export default store;
