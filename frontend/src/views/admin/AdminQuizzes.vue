@@ -117,7 +117,7 @@
 </template>
 
 <script>
-import store from '@/store';
+import store from '@/store/store/store';
 
 export default {
   data() {

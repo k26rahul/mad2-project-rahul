@@ -132,7 +132,7 @@ export default {
   },
 
   async created() {
-    await store.fetchAll();
+    await store.subjects.fetchAll();
   },
 
   methods: {

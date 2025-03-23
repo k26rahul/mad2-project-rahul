@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import store from '@/store';
+import store from '@/store/store/store';
 import router from '@/router';
 
 export default {

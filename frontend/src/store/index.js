@@ -1,14 +1,15 @@
 import { reactive, watch } from 'vue';
-import subjects from './store/modules/subjects';
-import chapters from './store/modules/chapters';
-import quizzes from './store/modules/quizzes';
-import questions from './store/modules/questions';
+import subjects from './modules/subjects';
+import chapters from './modules/chapters';
+import quizzes from './modules/quizzes';
+import questions from './modules/questions';
 
 const store = reactive({
   auth: {
     isLoggedIn: false,
     role: null,
   },
+
   api: {
     origin: 'http://127.0.0.1:5000',
   },
