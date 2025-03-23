@@ -5,17 +5,30 @@ from db.models import db, Chapter, Subject
 chapter_bp = Blueprint('chapter', __name__)
 
 
+def _construct_chapter_dict(chapter):
+  chapter_dict = chapter.as_dict()
+  chapter_dict['subject_name'] = chapter.subject.name
+  return chapter_dict
+
+
 @chapter_bp.route('/get/<int:id>', methods=['GET'])
 @roles_accepted('admin', 'user')
-def get_chapter(id):
+def get(id):
   chapter = Chapter.query.get_or_404(id)
-  chapter_dict = chapter.as_dict()
-  return jsonify(success=True, chapter=chapter_dict)
+  return jsonify(success=True, chapter=_construct_chapter_dict(chapter))
+
+
+@chapter_bp.route('/get-all', methods=['GET'])
+@roles_accepted('admin', 'user')
+def get_all():
+  chapters = Chapter.query.all()
+  result = [_construct_chapter_dict(chapter) for chapter in chapters]
+  return jsonify(success=True, chapters=result)
 
 
 @chapter_bp.route('/create', methods=['POST'])
 @roles_required('admin')
-def create_chapter():
+def create():
   data = request.get_json()
   name = data.get('name')
   description = data.get('description')  # optional
@@ -51,7 +64,7 @@ def create_chapter():
 
 @chapter_bp.route('/update/<int:id>', methods=['PUT'])
 @roles_required('admin')
-def update_chapter(id):
+def update(id):
   chapter = Chapter.query.get_or_404(id)
   data = request.get_json()
 
@@ -59,12 +72,12 @@ def update_chapter(id):
   chapter.description = data.get('description', chapter.description)
 
   db.session.commit()
-  return jsonify(success=True, chapter=chapter.as_dict())
+  return jsonify(success=True, chapter=chapter.as_dict(), message="Chapter updated successfully")
 
 
 @chapter_bp.route('/delete/<int:id>', methods=['DELETE'])
 @roles_required('admin')
-def delete_chapter(id):
+def delete(id):
   chapter = Chapter.query.get_or_404(id)
   db.session.delete(chapter)
   db.session.commit()

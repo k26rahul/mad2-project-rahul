@@ -5,20 +5,32 @@ from db.models import db, Question, Quiz
 question_bp = Blueprint('question', __name__)
 
 
-@question_bp.route('/get/<int:id>', methods=['GET'])
-@roles_accepted('admin', 'user')
-def get_question(id):
-  question = Question.query.get_or_404(id)
+def _construct_question_dict(question):
   question_dict = question.as_dict()
   question_dict['quiz_title'] = question.quiz.title
   question_dict['chapter_name'] = question.quiz.chapter.name
   question_dict['subject_name'] = question.quiz.chapter.subject.name
-  return jsonify(success=True, question=question_dict)
+  return question_dict
+
+
+@question_bp.route('/get/<int:id>', methods=['GET'])
+@roles_accepted('admin', 'user')
+def get(id):
+  question = Question.query.get_or_404(id)
+  return jsonify(success=True, question=_construct_question_dict(question))
+
+
+@question_bp.route('/get-all', methods=['GET'])
+@roles_accepted('admin', 'user')
+def get_all():
+  questions = Question.query.all()
+  result = [_construct_question_dict(question) for question in questions]
+  return jsonify(success=True, questions=result)
 
 
 @question_bp.route('/create', methods=['POST'])
 @roles_required('admin')
-def create_question():
+def create():
   data = request.get_json()
   statement = data.get('statement')
   option_a = data.get('option_a')
@@ -52,7 +64,7 @@ def create_question():
 
 @question_bp.route('/update/<int:id>', methods=['PUT'])
 @roles_required('admin')
-def update_question(id):
+def update(id):
   question = Question.query.get_or_404(id)
   data = request.get_json()
 
@@ -64,12 +76,12 @@ def update_question(id):
   question.correct_option = data.get('correct_option', question.correct_option)
 
   db.session.commit()
-  return jsonify(success=True, question=question.as_dict())
+  return jsonify(success=True, question=question.as_dict(), message="Question updated successfully")
 
 
 @question_bp.route('/delete/<int:id>', methods=['DELETE'])
 @roles_required('admin')
-def delete_question(id):
+def delete(id):
   question = Question.query.get_or_404(id)
   db.session.delete(question)
   db.session.commit()

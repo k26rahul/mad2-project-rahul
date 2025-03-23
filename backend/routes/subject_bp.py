@@ -5,30 +5,30 @@ from db.models import db, Subject
 subject_bp = Blueprint('subject', __name__)
 
 
+def _construct_subject_dict(subject):
+  subject_dict = subject.as_dict()
+  subject_dict['chapters'] = [chapter.id for chapter in subject.chapters]
+  return subject_dict
+
+
 @subject_bp.route('/get/<int:id>', methods=['GET'])
 @roles_accepted('admin', 'user')
-def get_subject(id):
+def get(id):
   subject = Subject.query.get_or_404(id)
-  subject_dict = subject.as_dict()
-  subject_dict['chapters'] = [chapter.as_dict() for chapter in subject.chapters]
-  return jsonify(success=True, subject=subject_dict)
+  return jsonify(success=True, subject=_construct_subject_dict(subject))
 
 
 @subject_bp.route('/get-all', methods=['GET'])
 @roles_accepted('admin', 'user')
-def get_subjects():
+def get_all():
   subjects = Subject.query.all()
-  result = []
-  for subject in subjects:
-    subject_dict = subject.as_dict()
-    subject_dict['chapters'] = [chapter.as_dict() for chapter in subject.chapters]
-    result.append(subject_dict)
+  result = [_construct_subject_dict(subject) for subject in subjects]
   return jsonify(success=True, subjects=result)
 
 
 @subject_bp.route('/create', methods=['POST'])
 @roles_required('admin')
-def create_subject():
+def create():
   data = request.get_json()
   name = data.get('name')
   description = data.get('description')  # optional
@@ -52,7 +52,7 @@ def create_subject():
 
 @subject_bp.route('/update/<int:id>', methods=['PUT'])
 @roles_required('admin')
-def update_subject(id):
+def update(id):
   subject = Subject.query.get_or_404(id)
   data = request.get_json()
 
@@ -60,12 +60,12 @@ def update_subject(id):
   subject.description = data.get('description', subject.description)
 
   db.session.commit()
-  return jsonify(success=True, subject=subject.as_dict())
+  return jsonify(success=True, subject=subject.as_dict(), message="Subject updated successfully")
 
 
 @subject_bp.route('/delete/<int:id>', methods=['DELETE'])
 @roles_required('admin')
-def delete_subject(id):
+def delete(id):
   subject = Subject.query.get_or_404(id)
   db.session.delete(subject)
   db.session.commit()
