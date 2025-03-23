@@ -20,7 +20,7 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h1 class="text-primary fw-bold">Subjects & Chapters</h1>
-      <router-link to="/admin/new-subject" class="btn btn-primary shadow-sm">
+      <router-link to="/admin/subject/new" class="btn btn-primary shadow-sm">
         <i class="bi bi-plus-lg fs-5"></i> Add Subject
       </router-link>
     </div>
@@ -56,7 +56,7 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
               <h4 class="text-secondary fw-semibold">Chapters</h4>
               <router-link
-                :to="`/admin/new-chapter/${subject.id}`"
+                :to="`/admin/subject/${subject.id}/chapter/new`"
                 class="btn btn-sm btn-outline-primary"
               >
                 <i class="bi bi-plus-lg fs-5"></i> Add Chapter
@@ -182,7 +182,7 @@ export default {
     },
 
     editSubject(id) {
-      this.$router.push(`/admin/edit-subject/${id}`);
+      this.$router.push(`/admin/subject/${id}/edit`);
     },
 
     async deleteSubject(id) {
@@ -197,7 +197,7 @@ export default {
     },
 
     editChapter(id) {
-      this.$router.push(`/admin/edit-chapter/${id}`);
+      this.$router.push(`/admin/chapter/${id}/edit`);
     },
 
     async deleteChapter(id) {

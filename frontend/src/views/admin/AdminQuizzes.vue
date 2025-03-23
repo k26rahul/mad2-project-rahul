@@ -21,7 +21,7 @@
 
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h1 class="text-primary fw-bold">Quizzes</h1>
-      <router-link to="/admin/new-quiz" class="btn btn-primary shadow-sm">
+      <router-link to="/admin/quiz/new" class="btn btn-primary shadow-sm">
         <i class="bi bi-plus-lg fs-5"></i> Add Quiz
       </router-link>
     </div>
@@ -71,7 +71,7 @@
             <div class="d-flex justify-content-between align-items-center mb-3">
               <h4 class="text-secondary fw-semibold">Questions</h4>
               <router-link
-                :to="`/admin/new-question/${quiz.id}`"
+                :to="`/admin/quiz/${quiz.id}/question/new`"
                 class="btn btn-sm btn-outline-primary"
               >
                 <i class="bi bi-plus-lg fs-5"></i> Add Question
@@ -194,7 +194,7 @@ export default {
     },
 
     editQuiz(id) {
-      this.$router.push(`/admin/edit-quiz/${id}`);
+      this.$router.push(`/admin/quiz/${id}/edit`);
     },
 
     async deleteQuiz(id) {
@@ -209,7 +209,7 @@ export default {
     },
 
     editQuestion(id) {
-      this.$router.push(`/admin/edit-question/${id}`);
+      this.$router.push(`/admin/question/${id}/edit`);
     },
 
     async deleteQuestion(id) {
