@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import store from '@/store/store/store';
+import { authStore } from '@/store';
 import router from '@/router';
 import { post } from '@/utils/fetchHelper';
 
@@ -60,8 +60,8 @@ export default {
           rememberMe: this.rememberMe,
         });
         if (result.success) {
-          store.auth.isLoggedIn = true;
-          store.auth.role = result.role;
+          authStore.isLoggedIn = true;
+          authStore.role = result.role;
           router.push('/');
         } else {
           this.errorMessage = result.message;

@@ -1,5 +1,3 @@
-import store from '@/store';
-
 export async function fetchHelper(method, apiPath, payload = null) {
   const options = {
     method,
@@ -13,7 +11,7 @@ export async function fetchHelper(method, apiPath, payload = null) {
   }
 
   try {
-    const response = await fetch(`${store.api.origin}${apiPath}`, options);
+    const response = await fetch(`http://127.0.0.1:5000${apiPath}`, options);
     const data = await response.json();
     return { ok: response.ok, status: response.status, data };
   } catch (error) {

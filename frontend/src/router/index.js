@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import store from '@/store';
+import { authStore } from '@/store';
 import commonRoutes from './commonRoutes';
 import authRoutes from './authRoutes';
 import adminRoutes from './adminRoutes';
@@ -12,19 +12,19 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) => {
   // If at root and logged in, redirect based on role
-  if (to.path === '/' && store.auth.isLoggedIn) {
-    if (store.auth.role === 'admin') {
+  if (to.path === '/' && authStore.isLoggedIn) {
+    if (authStore.role === 'admin') {
       return next('/admin/home');
-    } else if (store.auth.role === 'user') {
+    } else if (authStore.role === 'user') {
       return next('/user/home');
     }
   }
   // Admin route guard
-  if (to.path.startsWith('/admin') && (!store.auth.isLoggedIn || store.auth.role !== 'admin')) {
+  if (to.path.startsWith('/admin') && (!authStore.isLoggedIn || authStore.role !== 'admin')) {
     return next('/login');
   }
   // User route guard
-  if (to.path.startsWith('/user') && (!store.auth.isLoggedIn || store.auth.role !== 'user')) {
+  if (to.path.startsWith('/user') && (!authStore.isLoggedIn || authStore.role !== 'user')) {
     return next('/login');
   }
   next();

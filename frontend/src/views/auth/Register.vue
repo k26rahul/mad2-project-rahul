@@ -53,7 +53,7 @@
 </template>
 
 <script>
-import store from '@/store/store/store';
+import { authStore } from '@/store';
 import router from '@/router';
 import { post } from '@/utils/fetchHelper';
 
@@ -79,8 +79,8 @@ export default {
           qualification: this.qualification,
         });
         if (result.success) {
-          store.auth.isLoggedIn = true;
-          store.auth.role = 'user';
+          authStore.isLoggedIn = true;
+          authStore.role = 'user';
           router.push('/');
         } else {
           this.errorMessage = result.message;

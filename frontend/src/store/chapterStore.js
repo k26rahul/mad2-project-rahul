@@ -1,15 +1,21 @@
 import { get, post, put, del } from '@/utils/fetchHelper';
+import { reactive } from 'vue';
 
-export default {
-  state: {
-    chapters: [],
+export default reactive({
+  chapters: [],
+  initialized: false,
+
+  async init() {
+    if (!this.initialized) {
+      await this.fetchAll();
+      this.initialized = true;
+    }
   },
 
   async fetchAll() {
-    // This might not be needed as chapters come with subjects
     const result = await get('/api/chapter/get-all');
     if (result.success) {
-      this.state.chapters = result.chapters;
+      this.chapters = result.chapters;
     }
     return result;
   },
@@ -17,7 +23,6 @@ export default {
   async create(data) {
     const result = await post('/api/chapter/create', data);
     if (result.success) {
-      // Refresh subjects as chapters are nested in subjects
       await this.store.subjects.fetchAll();
     }
     return result;
@@ -43,4 +48,4 @@ export default {
     const result = await get(`/api/chapter/get/${id}`);
     return result;
   },
-};
+});

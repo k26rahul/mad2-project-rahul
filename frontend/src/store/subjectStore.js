@@ -1,14 +1,21 @@
 import { get, post, put, del } from '@/utils/fetchHelper';
+import { reactive } from 'vue';
 
-export default {
-  state: {
-    subjects: [],
+export default reactive({
+  subjects: [],
+  initialized: false,
+
+  async init() {
+    if (!this.initialized) {
+      await this.fetchAll();
+      this.initialized = true;
+    }
   },
 
   async fetchAll() {
     const result = await get('/api/subject/get-all');
     if (result.success) {
-      this.state.subjects = result.subjects;
+      this.subjects = result.subjects;
     }
     return result;
   },
@@ -41,4 +48,4 @@ export default {
     const result = await get(`/api/subject/get/${id}`);
     return result;
   },
-};
+});

@@ -105,7 +105,7 @@
 </template>
 
 <script>
-import store from '@/store';
+import { subjectStore } from '@/store';
 import { matchQuery } from '@/utils/searchUtil';
 
 export default {
@@ -118,7 +118,7 @@ export default {
 
   computed: {
     subjects() {
-      return store.subjects;
+      return subjectStore.subjects;
     },
   },
 
@@ -132,7 +132,7 @@ export default {
   },
 
   async created() {
-    await store.subjects.fetchAll();
+    await subjectStore.init();
   },
 
   methods: {
@@ -180,7 +180,7 @@ export default {
 
     async deleteSubject(id) {
       if (!confirm('Are you sure you want to delete this subject and all its chapters?')) return;
-      await store.delete(id);
+      await subjectStore.delete(id);
     },
 
     editChapter(id) {
