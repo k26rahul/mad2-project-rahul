@@ -117,19 +117,23 @@
 </template>
 
 <script>
-import { get, del } from '@/utils/fetchHelper';
+import store from '@/store';
 
 export default {
   data() {
     return {
-      quizzes: [],
-      subjects: [],
       selectedSubjectId: 'all',
       selectedChapterId: 'all',
     };
   },
 
   computed: {
+    subjects() {
+      return store.subjects;
+    },
+    quizzes() {
+      return store.quizzes;
+    },
     availableChapters() {
       if (this.selectedSubjectId === 'all') {
         return this.subjects.flatMap(s => s.chapters);
@@ -150,22 +154,11 @@ export default {
   },
 
   async created() {
-    await Promise.all([this.fetchQuizzes(), this.fetchSubjects()]);
+    await Promise.all([store.subjects.fetchAll(), store.quizzes.fetchAll()]);
     this.updateQuizMatches();
   },
 
   methods: {
-    async fetchSubjects() {
-      try {
-        const result = await get('/api/subject/get-all');
-        if (result.success) {
-          this.subjects = result.subjects;
-        }
-      } catch (error) {
-        console.error('Failed to fetch subjects:', error);
-      }
-    },
-
     updateQuizMatches() {
       this.quizzes.forEach(quiz => {
         const matchesSubject =
@@ -181,31 +174,13 @@ export default {
       });
     },
 
-    async fetchQuizzes() {
-      try {
-        const result = await get('/api/quiz/get-all');
-        if (result.success) {
-          this.quizzes = result.quizzes;
-          this.updateQuizMatches();
-        }
-      } catch (error) {
-        console.error('Failed to fetch quizzes:', error);
-      }
-    },
-
     editQuiz(id) {
       this.$router.push(`/admin/quiz/${id}/edit`);
     },
 
     async deleteQuiz(id) {
       if (!confirm('Are you sure you want to delete this quiz and all its questions?')) return;
-
-      try {
-        const result = await del(`/api/quiz/delete/${id}`);
-        if (result.success) await this.fetchQuizzes();
-      } catch (error) {
-        console.error('Failed to delete quiz:', error);
-      }
+      await store.quizzes.delete(id);
     },
 
     editQuestion(id) {
@@ -214,13 +189,7 @@ export default {
 
     async deleteQuestion(id) {
       if (!confirm('Are you sure you want to delete this question?')) return;
-
-      try {
-        const result = await del(`/api/question/delete/${id}`);
-        if (result.success) await this.fetchQuizzes();
-      } catch (error) {
-        console.error('Failed to delete question:', error);
-      }
+      await store.questions.delete(id);
     },
   },
 };

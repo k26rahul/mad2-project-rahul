@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import { post, put, get } from '@/utils/fetchHelper';
+import store from '@/store';
 import router from '@/router';
 
 export default {
@@ -51,7 +51,7 @@ export default {
     if (id) {
       this.isEdit = true;
       try {
-        const result = await get(`/api/subject/get/${id}`);
+        const result = await store.subjects.get(id);
         if (result.success) {
           this.formData = {
             name: result.subject.name,
@@ -70,9 +70,9 @@ export default {
       try {
         let result;
         if (this.isEdit) {
-          result = await put(`/api/subject/update/${this.$route.params.id}`, this.formData);
+          result = await store.subjects.update(this.$route.params.id, this.formData);
         } else {
-          result = await post('/api/subject/create', this.formData);
+          result = await store.subjects.create(this.formData);
         }
 
         if (result.success) {

@@ -105,16 +105,21 @@
 </template>
 
 <script>
-import { get, del } from '@/utils/fetchHelper';
+import store from '@/store';
 import { matchQuery } from '@/utils/searchUtil';
 
 export default {
   data() {
     return {
-      subjects: [],
       searchQuery: '',
       searchType: 'subject',
     };
+  },
+
+  computed: {
+    subjects() {
+      return store.subjects;
+    },
   },
 
   watch: {
@@ -127,7 +132,7 @@ export default {
   },
 
   async created() {
-    await this.fetchSubjects();
+    await store.fetchAll();
   },
 
   methods: {
@@ -169,31 +174,13 @@ export default {
       }
     },
 
-    async fetchSubjects() {
-      try {
-        const result = await get('/api/subject/get-all');
-        if (result.success) {
-          this.subjects = result.subjects;
-          this.updateSearchMatches();
-        }
-      } catch (error) {
-        console.error('Failed to fetch subjects:', error);
-      }
-    },
-
-    editSubject(id) {
+    async editSubject(id) {
       this.$router.push(`/admin/subject/${id}/edit`);
     },
 
     async deleteSubject(id) {
       if (!confirm('Are you sure you want to delete this subject and all its chapters?')) return;
-
-      try {
-        const result = await del(`/api/subject/delete/${id}`);
-        if (result.success) await this.fetchSubjects();
-      } catch (error) {
-        console.error('Failed to delete subject:', error);
-      }
+      await store.delete(id);
     },
 
     editChapter(id) {
@@ -202,13 +189,7 @@ export default {
 
     async deleteChapter(id) {
       if (!confirm('Are you sure you want to delete this chapter?')) return;
-
-      try {
-        const result = await del(`/api/chapter/delete/${id}`);
-        if (result.success) await this.fetchSubjects();
-      } catch (error) {
-        console.error('Failed to delete chapter:', error);
-      }
+      await store.chapters.delete(id);
     },
   },
 };

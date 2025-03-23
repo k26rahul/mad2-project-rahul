@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import { post, put, get } from '@/utils/fetchHelper';
+import store from '@/store';
 import router from '@/router';
 
 export default {
@@ -73,49 +73,38 @@ export default {
         duration: '',
       },
       selectedSubject: null,
-      subjects: [],
-      chapters: [],
       errorMessage: '',
       isEdit: false,
     };
   },
+
+  computed: {
+    subjects() {
+      return store.subjects;
+    },
+    chapters() {
+      return this.selectedSubject ? this.selectedSubject.chapters || [] : [];
+    },
+  },
+
   async created() {
-    await this.loadSubjects();
+    await store.subjects.fetchAll();
     const id = this.$route.params.id;
     if (id) {
       this.isEdit = true;
       await this.loadQuizData(id);
     }
   },
+
   methods: {
-    async loadSubjects() {
-      try {
-        const result = await get('/api/subject/get-all');
-        if (result.success) {
-          this.subjects = result.subjects;
-        }
-      } catch (error) {
-        this.errorMessage = 'Failed to load subjects';
-      }
-    },
-    loadChapters() {
-      if (this.selectedSubject) {
-        this.chapters = this.selectedSubject.chapters || [];
-      } else {
-        this.chapters = [];
-      }
-      this.formData.chapter_id = '';
-    },
     async loadQuizData(id) {
       try {
-        const result = await get(`/api/quiz/get/${id}`);
+        const result = await store.quizzes.get(id);
         if (result.success) {
-          // Format the date string if it exists
           const formattedDate = result.quiz.start_time
             ? new Date(result.quiz.start_time).toISOString().slice(0, 16)
             : '';
 
-          // Set form data
           this.formData = {
             title: result.quiz.title,
             description: result.quiz.description,
@@ -124,26 +113,22 @@ export default {
             duration: result.quiz.duration,
           };
 
-          // Find and set the selected subject based on the chapter's subject
-          const subjectName = result.quiz.subject_name;
-          this.selectedSubject = this.subjects.find(s => s.name === subjectName);
-
-          // Load chapters for the selected subject
-          if (this.selectedSubject) {
-            this.chapters = this.selectedSubject.chapters || [];
-          }
+          this.selectedSubject = this.subjects.find(s =>
+            s.chapters.some(c => c.id === result.quiz.chapter_id)
+          );
         }
       } catch (error) {
         this.errorMessage = 'Failed to load quiz data';
       }
     },
+
     async handleSubmit() {
       try {
         let result;
         if (this.isEdit) {
-          result = await put(`/api/quiz/update/${this.$route.params.id}`, this.formData);
+          result = await store.quizzes.update(this.$route.params.id, this.formData);
         } else {
-          result = await post('/api/quiz/create', this.formData);
+          result = await store.quizzes.create(this.formData);
         }
 
         if (result.success) {

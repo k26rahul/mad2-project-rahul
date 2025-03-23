@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import { post, put, get } from '@/utils/fetchHelper';
+import store from '@/store';
 import router from '@/router';
 
 export default {
@@ -99,20 +99,16 @@ export default {
   },
   methods: {
     async loadQuizData(quizId) {
-      try {
-        const result = await get(`/api/quiz/get/${quizId}`);
-        if (result.success) {
-          this.quizTitle = result.quiz.title;
-          this.subjectName = result.quiz.subject_name;
-          this.chapterName = result.quiz.chapter_name;
-        }
-      } catch (error) {
-        this.errorMessage = 'Failed to load quiz data';
+      const quiz = store.quizzes.find(q => q.id === quizId);
+      if (quiz) {
+        this.quizTitle = quiz.title;
+        this.subjectName = quiz.subject_name;
+        this.chapterName = quiz.chapter_name;
       }
     },
     async loadQuestionData(id) {
       try {
-        const result = await get(`/api/question/get/${id}`);
+        const result = await store.questions.get(id);
         if (result.success) {
           this.formData = {
             statement: result.question.statement,
@@ -123,9 +119,7 @@ export default {
             correct_option: result.question.correct_option,
             quiz_id: result.question.quiz_id,
           };
-          this.quizTitle = result.question.quiz_title;
-          this.subjectName = result.question.subject_name;
-          this.chapterName = result.question.chapter_name;
+          await this.loadQuizData(result.question.quiz_id);
         }
       } catch (error) {
         this.errorMessage = 'Failed to load question data';
@@ -135,9 +129,9 @@ export default {
       try {
         let result;
         if (this.isEdit) {
-          result = await put(`/api/question/update/${this.$route.params.id}`, this.formData);
+          result = await store.questions.update(this.$route.params.id, this.formData);
         } else {
-          result = await post('/api/question/create', this.formData);
+          result = await store.questions.create(this.formData);
         }
 
         if (result.success) {
