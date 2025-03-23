@@ -1,6 +1,6 @@
 import { get, post, put, del } from '@/utils/fetchHelper';
 import { reactive } from 'vue';
-import { quizStore } from '@/store';
+import { quizStore } from '.';
 
 const store = reactive({
   questions: new Map(),
@@ -41,7 +41,9 @@ const store = reactive({
   },
 
   async delete(id) {
+    id = parseInt(id);
     await del(`/api/question/delete/${id}`);
+    quizStore.fetch(this.questions.get(id).quiz_id);
     this.questions.delete(id);
   },
 });

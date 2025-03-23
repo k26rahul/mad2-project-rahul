@@ -1,6 +1,6 @@
 import { get, post, put, del } from '@/utils/fetchHelper';
 import { reactive } from 'vue';
-import questionStore from './questionStore';
+import { questionStore } from '.';
 
 const store = reactive({
   quizzes: new Map(),

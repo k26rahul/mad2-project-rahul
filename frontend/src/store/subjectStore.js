@@ -1,6 +1,6 @@
 import { get, post, put, del } from '@/utils/fetchHelper';
 import { reactive } from 'vue';
-import chapterStore from './chapterStore';
+import { chapterStore } from '.';
 
 const store = reactive({
   subjects: new Map(),

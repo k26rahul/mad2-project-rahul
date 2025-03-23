@@ -1,6 +1,6 @@
 import { get, post, put, del } from '@/utils/fetchHelper';
 import { reactive } from 'vue';
-import { subjectStore } from '@/store';
+import { subjectStore } from '.';
 
 const store = reactive({
   chapters: new Map(),
@@ -41,7 +41,9 @@ const store = reactive({
   },
 
   async delete(id) {
+    id = parseInt(id);
     await del(`/api/chapter/delete/${id}`);
+    subjectStore.fetch(this.chapters.get(id).subject_id);
     this.chapters.delete(id);
   },
 });
