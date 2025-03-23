@@ -2,50 +2,41 @@ import { get, post, put, del } from '@/utils/fetchHelper';
 import { reactive } from 'vue';
 
 export default reactive({
-  subjects: [],
-  initialized: false,
+  subjects: {},
+  initialFetchCompleted: false,
 
-  async init() {
-    if (!this.initialized) {
+  async initialFetchAll() {
+    if (!this.initialFetchCompleted) {
       await this.fetchAll();
-      this.initialized = true;
+      this.initialFetchCompleted = true;
     }
+  },
+
+  async fetch(id) {
+    const result = await get(`/api/subject/get/${id}`);
+    this.subjects[id] = result.subject;
   },
 
   async fetchAll() {
     const result = await get('/api/subject/get-all');
-    if (result.success) {
-      this.subjects = result.subjects;
-    }
-    return result;
+    this.subjects = {};
+    result.subjects.forEach(subject => {
+      this.subjects[subject.id] = subject;
+    });
   },
 
   async create(data) {
     const result = await post('/api/subject/create', data);
-    if (result.success) {
-      await this.fetchAll();
-    }
-    return result;
+    this.subjects[result.subject.id] = result.subject;
   },
 
   async update(id, data) {
     const result = await put(`/api/subject/update/${id}`, data);
-    if (result.success) {
-      await this.fetchAll();
-    }
-    return result;
+    this.subjects[id] = result.subject;
   },
 
   async delete(id) {
     const result = await del(`/api/subject/delete/${id}`);
-    if (result.success) {
-      await this.fetchAll();
-    }
-    return result;
-  },
-
-  async get(id) {
-    const result = await get(`/api/subject/get/${id}`);
-    return result;
+    delete this.subjects[id];
   },
 });

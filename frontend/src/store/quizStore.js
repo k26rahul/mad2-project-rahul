@@ -2,46 +2,41 @@ import { get, post, put, del } from '@/utils/fetchHelper';
 import { reactive } from 'vue';
 
 export default reactive({
-  quizzes: [],
-  initialized: false,
+  quizzes: {},
+  initialFetchCompleted: false,
 
-  async init() {
-    if (!this.initialized) {
+  async initialFetchAll() {
+    if (!this.initialFetchCompleted) {
       await this.fetchAll();
-      this.initialized = true;
+      this.initialFetchCompleted = true;
     }
+  },
+
+  async fetch(id) {
+    const result = await get(`/api/quiz/get/${id}`);
+    this.quizzes[id] = result.quiz;
   },
 
   async fetchAll() {
     const result = await get('/api/quiz/get-all');
-    if (result.success) {
-      this.quizzes = result.quizzes;
-    }
-    return result;
+    this.quizzes = {};
+    result.quizzes.forEach(quiz => {
+      this.quizzes[quiz.id] = quiz;
+    });
   },
+
   async create(data) {
     const result = await post('/api/quiz/create', data);
-    if (result.success) {
-      await this.fetchAll();
-    }
-    return result;
+    this.quizzes[result.quiz.id] = result.quiz;
   },
+
   async update(id, data) {
     const result = await put(`/api/quiz/update/${id}`, data);
-    if (result.success) {
-      await this.fetchAll();
-    }
-    return result;
+    this.quizzes[id] = result.quiz;
   },
+
   async delete(id) {
-    const result = await del(`/api/quiz/delete/${id}`);
-    if (result.success) {
-      await this.fetchAll();
-    }
-    return result;
-  },
-  async get(id) {
-    const result = await get(`/api/quiz/get/${id}`);
-    return result;
+    await del(`/api/quiz/delete/${id}`);
+    delete this.quizzes[id];
   },
 });
