@@ -5,26 +5,24 @@ import { chapterStore } from '.';
 const store = reactive({
   subjects: new Map(),
 
+  _setSubject(subject) {
+    if (this.subjects.has(subject.id)) {
+      Object.assign(this.subjects.get(subject.id), subject);
+    } else {
+      this.subjects.set(subject.id, subject);
+    }
+    return this.subjects.get(subject.id);
+  },
+
   async fetch(id) {
     id = parseInt(id);
     const { subject } = await get(`/api/subject/get/${id}`);
-    if (this.subjects.has(id)) {
-      Object.assign(this.subjects.get(id), subject);
-    } else {
-      this.subjects.set(id, subject);
-    }
-    return this.subjects.get(id);
+    return this._setSubject(subject);
   },
 
   async fetchAll() {
     const { subjects } = await get('/api/subject/get-all');
-    subjects.forEach(subject => {
-      if (this.subjects.has(subject.id)) {
-        Object.assign(this.subjects.get(subject.id), subject);
-      } else {
-        this.subjects.set(subject.id, subject);
-      }
-    });
+    subjects.forEach(subject => this._setSubject(subject));
     return this.subjects;
   },
 

@@ -5,32 +5,30 @@ import { quizStore } from '.';
 const store = reactive({
   questions: new Map(),
 
+  _setQuestion(question) {
+    if (this.questions.has(question.id)) {
+      Object.assign(this.questions.get(question.id), question);
+    } else {
+      this.questions.set(question.id, question);
+    }
+    return this.questions.get(question.id);
+  },
+
   async fetch(id) {
     id = parseInt(id);
     const { question } = await get(`/api/question/get/${id}`);
-    if (this.questions.has(id)) {
-      Object.assign(this.questions.get(id), question);
-    } else {
-      this.questions.set(id, question);
-    }
-    return this.questions.get(id);
+    return this._setQuestion(question);
   },
 
   async fetchAll() {
     const { questions } = await get('/api/question/get-all');
-    questions.forEach(question => {
-      if (this.questions.has(question.id)) {
-        Object.assign(this.questions.get(question.id), question);
-      } else {
-        this.questions.set(question.id, question);
-      }
-    });
+    questions.forEach(question => this._setQuestion(question));
     return this.questions;
   },
 
   async create(data) {
     const { question } = await post('/api/question/create', data);
-    this.questions.set(question.id, question);
+    this._setQuestion(question);
     quizStore.fetch(question.quiz_id);
   },
 
