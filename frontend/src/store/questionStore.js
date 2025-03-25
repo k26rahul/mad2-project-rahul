@@ -29,19 +29,20 @@ const store = reactive({
   async create(data) {
     const { question } = await post('/api/question/create', data);
     this._setQuestion(question);
-    quizStore.fetch(question.quiz_id);
+    quizStore.handleQuestionCreated(question);
   },
 
   async update(id, data) {
     id = parseInt(id);
     const { question } = await put(`/api/question/update/${id}`, data);
-    Object.assign(this.questions.get(id), question);
+    this._setQuestion(question);
   },
 
   async delete(id) {
     id = parseInt(id);
+    const question = this.questions.get(id);
     await del(`/api/question/delete/${id}`);
-    quizStore.fetch(this.questions.get(id).quiz_id);
+    quizStore.handleQuestionDeleted(question);
     this.questions.delete(id);
   },
 });

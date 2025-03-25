@@ -34,7 +34,7 @@ const store = reactive({
   async update(id, data) {
     id = parseInt(id);
     const { subject } = await put(`/api/subject/update/${id}`, data);
-    Object.assign(this.subjects.get(id), subject);
+    this._setSubject(subject);
   },
 
   async delete(id) {
@@ -47,6 +47,14 @@ const store = reactive({
     return subject.chapters
       .map(chapterId => chapterStore.chapters.get(chapterId))
       .filter(chapter => chapter !== undefined);
+  },
+
+  handleChapterCreated(chapter) {
+    this.fetch(chapter.subject_id);
+  },
+
+  handleChapterDeleted(chapter) {
+    this.fetch(chapter.subject_id);
   },
 });
 

@@ -29,19 +29,20 @@ const store = reactive({
   async create(data) {
     const { chapter } = await post('/api/chapter/create', data);
     this._setChapter(chapter);
-    subjectStore.fetch(chapter.subject_id);
+    subjectStore.handleChapterCreated(chapter);
   },
 
   async update(id, data) {
     id = parseInt(id);
     const { chapter } = await put(`/api/chapter/update/${id}`, data);
-    Object.assign(this.chapters.get(id), chapter);
+    this._setChapter(chapter);
   },
 
   async delete(id) {
     id = parseInt(id);
+    const chapter = this.chapters.get(id);
     await del(`/api/chapter/delete/${id}`);
-    subjectStore.fetch(this.chapters.get(id).subject_id);
+    subjectStore.handleChapterDeleted(chapter);
     this.chapters.delete(id);
   },
 });

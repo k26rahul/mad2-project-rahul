@@ -34,7 +34,7 @@ const store = reactive({
   async update(id, data) {
     id = parseInt(id);
     const { quiz } = await put(`/api/quiz/update/${id}`, data);
-    Object.assign(this.quizzes.get(id), quiz);
+    this._setQuiz(quiz);
   },
 
   async delete(id) {
@@ -47,6 +47,14 @@ const store = reactive({
     return quiz.questions
       .map(questionId => questionStore.questions.get(questionId))
       .filter(question => question !== undefined);
+  },
+
+  handleQuestionCreated(question) {
+    this.fetch(question.quiz_id);
+  },
+
+  handleQuestionDeleted(question) {
+    this.fetch(question.quiz_id);
   },
 });
 
