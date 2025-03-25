@@ -61,7 +61,7 @@
               <small
                 :class="{
                   'text-success': isQuizStarted(quiz),
-                  'text-warning': !isQuizStarted(quiz),
+                  'text-danger': !isQuizStarted(quiz),
                 }"
               >
                 <i class="bi bi-calendar me-1"></i>

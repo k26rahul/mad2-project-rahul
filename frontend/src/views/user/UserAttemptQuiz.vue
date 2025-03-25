@@ -149,6 +149,7 @@
 
 <script>
 import { quizStore, questionStore, quizAttemptStore } from '@/store';
+import confetti from 'canvas-confetti';
 
 export default {
   data() {
@@ -198,6 +199,55 @@ export default {
       }, 1000);
     },
 
+    celebrateSuccess() {
+      // An initial center burst
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+      });
+
+      // Two side cannon effects
+      setTimeout(() => {
+        confetti({
+          particleCount: 50,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 },
+        });
+        confetti({
+          particleCount: 50,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 },
+        });
+      }, 250);
+
+      // A 360-degree spread with colorful particles
+      setTimeout(() => {
+        const defaults = {
+          spread: 360,
+          ticks: 50,
+          gravity: 0,
+          decay: 0.94,
+          startVelocity: 30,
+          colors: ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#00ffff'],
+        };
+
+        confetti({
+          ...defaults,
+          particleCount: 50,
+          scalar: 2,
+        });
+
+        confetti({
+          ...defaults,
+          particleCount: 30,
+          scalar: 3,
+        });
+      }, 500);
+    },
+
     async submitQuiz(isAutoSubmit = false) {
       if (isAutoSubmit && this.quiz.duration) {
         alert('Time is up! Your quiz has been automatically submitted.');
@@ -213,6 +263,13 @@ export default {
       const { attempt, answerFeedback } = await quizAttemptStore.create(this.quiz.id, this.answers);
       this.attempt = attempt;
       this.answerFeedback = answerFeedback;
+
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (attempt.percentage >= 80) {
+        setTimeout(() => this.celebrateSuccess(), 1000);
+      }
     },
 
     getScoreClass(percentage) {

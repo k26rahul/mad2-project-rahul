@@ -1,8 +1,12 @@
+from datetime import datetime, timedelta
+
 data_quizzes = {
     "Mathematics": {
         "Calculus": [{
             "title": "Basic Calculus Quiz",
             "description": "Test your knowledge of basic calculus concepts",
+            'start_time': None,
+            'duration': None,
             "questions": [
                 {
                     "statement": "What’s the derivative of x²?",
@@ -49,6 +53,8 @@ data_quizzes = {
         "Algebra": [{
             "title": "Basic Algebra Quiz",
             "description": "Test your knowledge of basic algebraic concepts",
+            'start_time': None,
+            'duration': 1,
             "questions": [
                 {
                     "statement": "What’s x if x + 5 = 10?",
@@ -97,6 +103,8 @@ data_quizzes = {
         "Mechanics": [{
             "title": "Basic Mechanics Quiz",
             "description": "Test your knowledge of basic mechanics",
+            'start_time': datetime.now() + timedelta(days=1),
+            'duration': 1,
             "questions": [
                 {
                     "statement": "Which law is F = ma?",
@@ -143,6 +151,8 @@ data_quizzes = {
         "Optics": [{
             "title": "Basic Optics Quiz",
             "description": "Test your knowledge of basic optics",
+            'start_time': datetime.now() + timedelta(days=1),
+            'duration': 1,
             "questions": [
                 {
                     "statement": "What’s the speed of light?",
@@ -191,6 +201,8 @@ data_quizzes = {
         "Organic Chemistry": [{
             "title": "Basic Organic Chemistry Quiz",
             "description": "Test your knowledge of organic chemistry basics",
+            'start_time': datetime.now() + timedelta(days=1),
+            'duration': 1,
             "questions": [
                 {
                     "statement": "What’s the simplest alkane?",
@@ -237,6 +249,8 @@ data_quizzes = {
         "Biochemistry": [{
             "title": "Basic Biochemistry Quiz",
             "description": "Test your knowledge of biochemistry basics",
+            'start_time': datetime.now() + timedelta(days=1),
+            'duration': 1,
             "questions": [
                 {
                     "statement": "What does DNA stand for?",
@@ -285,6 +299,8 @@ data_quizzes = {
         "Cell Biology": [{
             "title": "Basic Cell Biology Quiz",
             "description": "Test your knowledge of cell biology",
+            'start_time': datetime.now() + timedelta(days=1),
+            'duration': 1,
             "questions": [
                 {
                     "statement": "What’s the powerhouse of the cell?",
@@ -331,6 +347,8 @@ data_quizzes = {
         "Genetics": [{
             "title": "Basic Genetics Quiz",
             "description": "Test your knowledge of genetics",
+            'start_time': datetime.now() + timedelta(days=1),
+            'duration': 1,
             "questions": [
                 {
                     "statement": "What’s a gene made of?",
@@ -379,6 +397,8 @@ data_quizzes = {
         "Programming": [{
             "title": "Basic Programming Quiz",
             "description": "Test your programming knowledge",
+            'start_time': datetime.now() + timedelta(days=1),
+            'duration': 1,
             "questions": [
                 {
                     "statement": "What’s Python?",
@@ -425,6 +445,8 @@ data_quizzes = {
         "Data Structures": [{
             "title": "Basic Data Structures Quiz",
             "description": "Test your knowledge of data structures",
+            'start_time': datetime.now() + timedelta(days=1),
+            'duration': 1,
             "questions": [
                 {
                     "statement": "What does a queue follow?",
@@ -473,6 +495,8 @@ data_quizzes = {
         "Grammar": [{
             "title": "Basic Grammar Quiz",
             "description": "Test your grammar knowledge",
+            'start_time': datetime.now() + timedelta(days=1),
+            'duration': 1,
             "questions": [
                 {
                     "statement": "How many parts of speech?",
@@ -519,6 +543,8 @@ data_quizzes = {
         "Literature": [{
             "title": "Basic Literature Quiz",
             "description": "Test your literature knowledge",
+            'start_time': datetime.now() + timedelta(days=1),
+            'duration': 1,
             "questions": [
                 {
                     "statement": "Who wrote Hamlet?",

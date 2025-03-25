@@ -73,7 +73,9 @@ def seed_data():
           quiz = Quiz(
               title=quiz_data["title"],
               description=quiz_data["description"],
-              chapter_id=chapter.id
+              chapter_id=chapter.id,
+              start_time=quiz_data['start_time'],
+              duration=quiz_data['duration'],
           )
           db.session.add(quiz)
           db.session.flush()
