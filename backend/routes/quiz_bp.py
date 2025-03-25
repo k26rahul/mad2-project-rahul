@@ -40,7 +40,10 @@ def create():
   duration = data.get('duration')  # optional
 
   if not all([title, chapter_id]):
-    return jsonify(success=False, message="title and chapter_id are required; optional fields: description, start_time, duration"), 400
+    return jsonify(
+        success=False,
+        message="title and chapter_id are required; optional fields: description, start_time, duration"
+    ), 400
 
   chapter = Chapter.query.get(chapter_id)
   if not chapter:
@@ -76,7 +79,9 @@ def update(id):
   quiz.duration = data.get('duration', quiz.duration)
 
   db.session.commit()
-  return jsonify(success=True, quiz=_construct_quiz_dict(quiz), message="Quiz updated successfully")
+  return jsonify(
+      success=True, quiz=_construct_quiz_dict(quiz), message="Quiz updated successfully"
+  )
 
 
 @quiz_bp.route('/delete/<int:id>', methods=['DELETE'])
