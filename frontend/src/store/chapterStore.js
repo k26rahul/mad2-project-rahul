@@ -1,6 +1,6 @@
 import { get, post, put, del } from '@/utils/fetchHelper';
 import { reactive } from 'vue';
-import { subjectStore } from '.';
+import { subjectStore, quizStore } from '.';
 
 const store = reactive({
   chapters: new Map(),
@@ -22,7 +22,13 @@ const store = reactive({
 
   async fetchAll() {
     const { chapters } = await get('/api/chapter/get-all');
+    const validIds = new Set(chapters.map(chapter => chapter.id));
     chapters.forEach(chapter => this._setChapter(chapter));
+    for (const id of this.chapters.keys()) {
+      if (!validIds.has(id)) {
+        this.chapters.delete(id);
+      }
+    }
     return this.chapters;
   },
 
@@ -43,7 +49,13 @@ const store = reactive({
     const chapter = this.chapters.get(id);
     await del(`/api/chapter/delete/${id}`);
     subjectStore.handleChapterDeleted(chapter);
+    quizStore.handleChapterDeleted();
     this.chapters.delete(id);
+  },
+
+  handleSubjectDeleted() {
+    this.fetchAll();
+    quizStore.handleChapterDeleted();
   },
 });
 

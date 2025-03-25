@@ -22,7 +22,13 @@ const store = reactive({
 
   async fetchAll() {
     const { questions } = await get('/api/question/get-all');
+    const validIds = new Set(questions.map(question => question.id));
     questions.forEach(question => this._setQuestion(question));
+    for (const id of this.questions.keys()) {
+      if (!validIds.has(id)) {
+        this.questions.delete(id);
+      }
+    }
     return this.questions;
   },
 
@@ -44,6 +50,10 @@ const store = reactive({
     await del(`/api/question/delete/${id}`);
     quizStore.handleQuestionDeleted(question);
     this.questions.delete(id);
+  },
+
+  handleQuizDeleted() {
+    this.fetchAll();
   },
 });
 

@@ -22,7 +22,13 @@ const store = reactive({
 
   async fetchAll() {
     const { subjects } = await get('/api/subject/get-all');
+    const validIds = new Set(subjects.map(subject => subject.id));
     subjects.forEach(subject => this._setSubject(subject));
+    for (const id of this.subjects.keys()) {
+      if (!validIds.has(id)) {
+        this.subjects.delete(id);
+      }
+    }
     return this.subjects;
   },
 
@@ -40,6 +46,7 @@ const store = reactive({
   async delete(id) {
     id = parseInt(id);
     await del(`/api/subject/delete/${id}`);
+    chapterStore.handleSubjectDeleted();
     this.subjects.delete(id);
   },
 
