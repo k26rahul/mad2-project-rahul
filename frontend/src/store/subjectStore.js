@@ -40,6 +40,7 @@ const store = reactive({
   },
 
   async delete(id) {
+    id = parseInt(id);
     await del(`/api/subject/delete/${id}`);
     this.subjects.delete(id);
   },

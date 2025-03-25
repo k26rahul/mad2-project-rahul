@@ -40,12 +40,15 @@ const store = reactive({
   },
 
   async delete(id) {
+    id = parseInt(id);
     await del(`/api/quiz/delete/${id}`);
     this.quizzes.delete(id);
   },
 
   getQuestionsForQuiz(quiz) {
-    return quiz.questions.map(qId => questionStore.questions.get(qId)).filter(q => q !== undefined);
+    return quiz.questions
+      .map(questionId => questionStore.questions.get(questionId))
+      .filter(question => question !== undefined);
   },
 });
 
