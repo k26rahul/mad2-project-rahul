@@ -249,7 +249,7 @@ export default {
     },
 
     async submitQuiz(isAutoSubmit = false) {
-      if (isAutoSubmit && this.quiz.duration) {
+      if (isAutoSubmit === true && this.quiz.duration) {
         alert('Time is up! Your quiz has been automatically submitted.');
       }
 

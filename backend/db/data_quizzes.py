@@ -103,7 +103,7 @@ data_quizzes = {
         "Mechanics": [{
             "title": "Basic Mechanics Quiz",
             "description": "Test your knowledge of basic mechanics",
-            'start_time': datetime.now() + timedelta(days=1),
+            'start_time': datetime.now() + timedelta(seconds=50),
             'duration': 1,
             "questions": [
                 {
