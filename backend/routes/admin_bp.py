@@ -12,6 +12,7 @@ def _construct_user_dict(user):
   del user_dict['password']
   del user_dict['fs_uniquifier']
   user_dict['role'] = user.roles[0].name
+  user_dict['total_attempts'] = QuizAttempt.query.filter_by(user_id=user.id).count()
   return user_dict
 
 

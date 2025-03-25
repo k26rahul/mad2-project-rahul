@@ -100,36 +100,42 @@
         </div>
       </div>
 
-      <!-- Charts Row -->
-      <div class="col-md-6">
-        <div class="card border-0 shadow-lg rounded-4 h-100">
-          <div class="card-header bg-primary bg-opacity-10 border-0 rounded-top-4">
-            <h4 class="fw-bold mb-0">Subject-wise Attempts</h4>
-          </div>
-          <div class="card-body">
-            <Bar :data="subjectAttemptsChart.data" :options="subjectAttemptsChart.options" />
+      <!-- Charts Section -->
+      <h2 class="text-primary fw-bold mb-4">Learning Analytics</h2>
+
+      <div class="row g-4">
+        <!-- Subject-wise Stats -->
+        <div class="col-md-6">
+          <div class="card border-0 shadow-lg rounded-4">
+            <div class="card-header bg-primary bg-opacity-10 border-0 rounded-top-4">
+              <h4 class="fw-bold mb-0">Subject-wise Attempts</h4>
+            </div>
+            <div class="card-body" style="height: 300px">
+              <Bar :data="subjectAttemptsChart.data" :options="subjectAttemptsChart.options" />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="col-md-6">
-        <div class="card border-0 shadow-lg rounded-4 h-100">
-          <div class="card-header bg-primary bg-opacity-10 border-0 rounded-top-4">
-            <h4 class="fw-bold mb-0">Subject-wise Accuracy</h4>
-          </div>
-          <div class="card-body">
-            <Bar :data="subjectAccuracyChart.data" :options="subjectAccuracyChart.options" />
+        <div class="col-md-6">
+          <div class="card border-0 shadow-lg rounded-4">
+            <div class="card-header bg-primary bg-opacity-10 border-0 rounded-top-4">
+              <h4 class="fw-bold mb-0">Subject-wise Accuracy</h4>
+            </div>
+            <div class="card-body" style="height: 300px">
+              <Bar :data="subjectAccuracyChart.data" :options="subjectAccuracyChart.options" />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="col-md-6">
-        <div class="card border-0 shadow-lg rounded-4 h-100">
-          <div class="card-header bg-primary bg-opacity-10 border-0 rounded-top-4">
-            <h4 class="fw-bold mb-0">Monthly Activity</h4>
-          </div>
-          <div class="card-body">
-            <Pie :data="monthlyActivityChart.data" :options="monthlyActivityChart.options" />
+        <!-- Monthly Activity -->
+        <div class="col-md-6">
+          <div class="card border-0 shadow-lg rounded-4">
+            <div class="card-header bg-primary bg-opacity-10 border-0 rounded-top-4">
+              <h4 class="fw-bold mb-0">Monthly Activity</h4>
+            </div>
+            <div class="card-body" style="height: 300px">
+              <Pie :data="monthlyActivityChart.data" :options="monthlyActivityChart.options" />
+            </div>
           </div>
         </div>
       </div>
@@ -213,6 +219,8 @@ export default {
         data,
         options: {
           responsive: true,
+          maintainAspectRatio: true,
+          aspectRatio: 1.5,
           plugins: {
             legend: {
               display: false,
@@ -254,6 +262,8 @@ export default {
         data,
         options: {
           responsive: true,
+          maintainAspectRatio: true,
+          aspectRatio: 1.5,
           plugins: {
             legend: {
               display: false,
@@ -306,6 +316,8 @@ export default {
         data,
         options: {
           responsive: true,
+          maintainAspectRatio: true,
+          aspectRatio: 1.5,
           plugins: {
             legend: {
               position: 'right',

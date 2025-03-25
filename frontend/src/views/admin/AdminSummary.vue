@@ -9,67 +9,75 @@
       </div>
     </div>
 
-    <div v-else class="row g-4 mb-4">
-      <!-- Platform Stats -->
-      <div class="col-md-6 col-lg-3">
-        <div class="card border-0 shadow-lg rounded-4 h-100">
-          <div class="card-body text-center">
-            <i class="bi bi-book fs-1 text-primary mb-2"></i>
-            <h5 class="fw-bold">Total Subjects</h5>
-            <h2 class="mb-0">{{ statistics.counts.subjects }}</h2>
+    <div v-else>
+      <!-- Summary Cards -->
+      <div class="row g-4 mb-5">
+        <div class="col-md-6 col-lg-3">
+          <div class="card border-0 shadow-lg rounded-4 h-100">
+            <div class="card-body text-center">
+              <i class="bi bi-book fs-1 text-primary mb-2"></i>
+              <h5 class="fw-bold">Total Subjects</h5>
+              <h2 class="mb-0">{{ statistics.counts.subjects }}</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="card border-0 shadow-lg rounded-4 h-100">
+            <div class="card-body text-center">
+              <i class="bi bi-journals fs-1 text-success mb-2"></i>
+              <h5 class="fw-bold">Total Chapters</h5>
+              <h2 class="mb-0">{{ statistics.counts.chapters }}</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="card border-0 shadow-lg rounded-4 h-100">
+            <div class="card-body text-center">
+              <i class="bi bi-clipboard-check fs-1 text-warning mb-2"></i>
+              <h5 class="fw-bold">Total Quizzes</h5>
+              <h2 class="mb-0">{{ statistics.counts.quizzes }}</h2>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+          <div class="card border-0 shadow-lg rounded-4 h-100">
+            <div class="card-body text-center">
+              <i class="bi bi-question-circle fs-1 text-info mb-2"></i>
+              <h5 class="fw-bold">Total Questions</h5>
+              <h2 class="mb-0">{{ statistics.counts.questions }}</h2>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="col-md-6 col-lg-3">
-        <div class="card border-0 shadow-lg rounded-4 h-100">
-          <div class="card-body text-center">
-            <i class="bi bi-journals fs-1 text-success mb-2"></i>
-            <h5 class="fw-bold">Total Chapters</h5>
-            <h2 class="mb-0">{{ statistics.counts.chapters }}</h2>
+      <!-- Charts Section -->
+      <h2 class="text-primary fw-bold mb-4">Subject Analytics</h2>
+
+      <div class="row g-4 mb-4">
+        <!-- Subject-wise Top Scores -->
+        <div class="col-md-6 mb-4">
+          <div class="card border-0 shadow-lg rounded-4">
+            <div class="card-header bg-primary bg-opacity-10 border-0 rounded-top-4">
+              <h4 class="fw-bold mb-0">Subject-wise Top Scores</h4>
+            </div>
+            <div class="card-body" style="height: 300px">
+              <Bar :data="topScoresChart.data" :options="topScoresChart.options" />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="col-md-6 col-lg-3">
-        <div class="card border-0 shadow-lg rounded-4 h-100">
-          <div class="card-body text-center">
-            <i class="bi bi-clipboard-check fs-1 text-warning mb-2"></i>
-            <h5 class="fw-bold">Total Quizzes</h5>
-            <h2 class="mb-0">{{ statistics.counts.quizzes }}</h2>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-6 col-lg-3">
-        <div class="card border-0 shadow-lg rounded-4 h-100">
-          <div class="card-body text-center">
-            <i class="bi bi-question-circle fs-1 text-info mb-2"></i>
-            <h5 class="fw-bold">Total Questions</h5>
-            <h2 class="mb-0">{{ statistics.counts.questions }}</h2>
-          </div>
-        </div>
-      </div>
-
-      <!-- Subject Stats -->
-      <div class="col-md-6">
-        <div class="card border-0 shadow-lg rounded-4">
-          <div class="card-header bg-primary bg-opacity-10 border-0 rounded-top-4">
-            <h4 class="fw-bold mb-0">Subject-wise Top Scores</h4>
-          </div>
-          <div class="card-body">
-            <Bar :data="topScoresChart.data" :options="topScoresChart.options" />
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-6">
-        <div class="card border-0 shadow-lg rounded-4">
-          <div class="card-header bg-primary bg-opacity-10 border-0 rounded-top-4">
-            <h4 class="fw-bold mb-0">Subject-wise Attempts</h4>
-          </div>
-          <div class="card-body">
-            <Radar :data="attemptsChart.data" :options="attemptsChart.options" />
+        <!-- Subject-wise Attempts -->
+        <div class="col-md-6">
+          <div class="card border-0 shadow-lg rounded-4">
+            <div class="card-header bg-primary bg-opacity-10 border-0 rounded-top-4">
+              <h4 class="fw-bold mb-0">Subject-wise Attempts</h4>
+            </div>
+            <div class="card-body" style="height: 300px">
+              <Radar :data="attemptsChart.data" :options="attemptsChart.options" />
+            </div>
           </div>
         </div>
       </div>
@@ -147,6 +155,8 @@ export default {
         data,
         options: {
           responsive: true,
+          maintainAspectRatio: true,
+          aspectRatio: 1.5,
           plugins: {
             legend: {
               display: false,
@@ -194,6 +204,8 @@ export default {
         data,
         options: {
           responsive: true,
+          maintainAspectRatio: true,
+          aspectRatio: 1.5,
           scales: {
             r: {
               beginAtZero: true,
