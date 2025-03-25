@@ -3,6 +3,7 @@ from flask_security import current_user, logout_user
 from flask_security.utils import login_user, verify_password, hash_password
 from db.models import db, Role, User
 from datetime import datetime
+import uuid
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -39,6 +40,15 @@ def login():
         success=False,
         message="Invalid email or password"
     ), 401
+
+  if not user.active:
+    return jsonify(
+        success=False,
+        message="Your account has been blocked. Please contact the administrator."
+    ), 403
+
+  user.fs_uniquifier = str(uuid.uuid4())
+  db.session.commit()
 
   login_user(user, remember=remember_me)
 
@@ -100,6 +110,8 @@ def logout():
         message="You are not logged in"
     ), 401
 
+  current_user.fs_uniquifier = None
+  db.session.commit()
   logout_user()
 
   return jsonify(

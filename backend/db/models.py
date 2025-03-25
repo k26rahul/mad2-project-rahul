@@ -47,7 +47,7 @@ class User(Base, UserMixin):
   password: Mapped[str] = mapped_column(String(255), nullable=False)
   active: Mapped[bool] = mapped_column(default=True)
   fs_uniquifier: Mapped[str] = mapped_column(
-      String(255), unique=True, nullable=False, default=lambda: str(uuid.uuid4())
+      String(255), unique=True, nullable=True, default=lambda: str(uuid.uuid4())
   )
   name: Mapped[str] = mapped_column(String(100), nullable=False)
   dob: Mapped[Optional[datetime]] = mapped_column(nullable=True)
