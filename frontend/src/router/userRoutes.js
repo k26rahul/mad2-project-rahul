@@ -4,24 +4,24 @@ export default [
     component: () => import('../views/user/UserLayout.vue'),
     children: [
       {
-        path: '',
-        component: () => import('../views/user/UserHome.vue'),
-      },
-      {
         path: 'home',
         component: () => import('../views/user/UserHome.vue'),
       },
       {
-        path: 'view-quiz/:subject_id',
+        path: 'quiz/:quiz_id',
         component: () => import('../views/user/UserViewQuiz.vue'),
       },
       {
-        path: 'do-quiz/:quiz_id',
-        component: () => import('../views/user/UserDoQuiz.vue'),
+        path: 'quiz/:quiz_id/attempt',
+        component: () => import('../views/user/UserAttemptQuiz.vue'),
       },
       {
         path: 'scores',
         component: () => import('../views/user/UserScores.vue'),
+      },
+      {
+        path: 'summary',
+        component: () => import('../views/user/UserSummary.vue'),
       },
     ],
   },
