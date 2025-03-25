@@ -9,7 +9,7 @@
           <ul class="nav">
             <li class="nav-item">
               <RouterLink
-                to="home"
+                to="/user/home"
                 class="nav-link text-white fw-semibold"
                 :class="{
                   'border-bottom border-2 border-white opacity-100': isHomeActive,
@@ -20,7 +20,7 @@
             </li>
             <li class="nav-item">
               <RouterLink
-                to="scores"
+                to="/user/scores"
                 class="nav-link text-white fw-semibold"
                 :class="{
                   'border-bottom border-2 border-white opacity-100': isScoresActive,
@@ -31,7 +31,7 @@
             </li>
             <li class="nav-item">
               <RouterLink
-                to="summary"
+                to="/user/summary"
                 class="nav-link text-white fw-semibold"
                 :class="{
                   'border-bottom border-2 border-white opacity-100': isSummaryActive,
@@ -68,7 +68,14 @@
 
 <script>
 import { RouterLink, RouterView } from 'vue-router';
-import { subjectStore, quizStore, questionStore, chapterStore, authStore } from '@/store';
+import {
+  subjectStore,
+  quizStore,
+  questionStore,
+  chapterStore,
+  authStore,
+  quizAttemptStore,
+} from '@/store';
 import { post } from '@/utils/fetchHelper';
 import router from '@/router';
 
@@ -113,6 +120,7 @@ export default {
       quizStore.fetchAll(),
       questionStore.fetchAll(),
       chapterStore.fetchAll(),
+      quizAttemptStore.fetchAll(),
     ]);
     this.loading = false;
   },

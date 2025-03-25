@@ -1,7 +1,8 @@
 from flask_security.utils import hash_password
-from db.models import db, Role, User, Subject, Chapter, Quiz, Question
+from db.models import db, Role, User, Subject, Chapter, Quiz, Question, QuizAttempt
 from .data_subjects import data_subjects
 from .data_quizzes import data_quizzes
+from .data_quiz_attempts import data_quiz_attempts
 
 
 def seed_data():
@@ -88,5 +89,18 @@ def seed_data():
                 quiz_id=quiz.id
             )
             db.session.add(question)
+
+    db.session.commit()
+
+  if not QuizAttempt.query.first():
+    print("Seeding quiz attempts...")
+    for attempt_data in data_quiz_attempts:
+      attempt = QuizAttempt(
+          quiz_id=attempt_data["quiz_id"],
+          user_id=attempt_data["user_id"],
+          attempted_at=attempt_data["attempted_at"],
+          score=attempt_data["score"]
+      )
+      db.session.add(attempt)
 
     db.session.commit()
