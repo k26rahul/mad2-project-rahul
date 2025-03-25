@@ -36,3 +36,66 @@ data_quiz_attempts = [
         "score": 1,     # 20% - danger
     }
 ]
+
+data_quiz_attempts += [
+    {
+        "quiz_id": 1,
+        "user_id": 2,
+        "attempted_at": datetime(2025, 1, 1),
+        "score": 4,
+    },
+    {
+        "quiz_id": 2,
+        "user_id": 2,
+        "attempted_at": datetime(2025, 1, 1),
+        "score": 4,
+    },
+    {
+        "quiz_id": 3,
+        "user_id": 2,
+        "attempted_at": datetime(2025, 2, 1),
+        "score": 4,
+    },
+    {
+        "quiz_id": 5,
+        "user_id": 2,
+        "attempted_at": datetime(2025, 1, 1),
+        "score": 2,
+    },
+    {
+        "quiz_id": 5,
+        "user_id": 2,
+        "attempted_at": datetime(2025, 1, 1),
+        "score": 2,
+    },
+    {
+        "quiz_id": 7,
+        "user_id": 2,
+        "attempted_at": datetime(2025, 1, 1),
+        "score": 4,
+    },
+    {
+        "quiz_id": 9,
+        "user_id": 2,
+        "attempted_at": datetime(2025, 1, 1),
+        "score": 2,
+    },
+    {
+        "quiz_id": 9,
+        "user_id": 2,
+        "attempted_at": datetime(2025, 1, 1),
+        "score": 2,
+    },
+    {
+        "quiz_id": 9,
+        "user_id": 2,
+        "attempted_at": datetime(2025, 1, 1),
+        "score": 2,
+    },
+    {
+        "quiz_id": 9,
+        "user_id": 2,
+        "attempted_at": datetime(2025, 1, 1),
+        "score": 5,
+    }
+]

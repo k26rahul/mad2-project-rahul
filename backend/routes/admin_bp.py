@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify, request
 from flask_security import roles_required
 from db.models import db, User
+from sqlalchemy import func
+from db.models import Subject, Chapter, Quiz, Question, QuizAttempt
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -62,3 +64,62 @@ def unblock_user(id):
       user=_construct_user_dict(user),
       message="User unblocked successfully"
   )
+
+
+@admin_bp.route('/statistics', methods=['GET'])
+@roles_required('admin')
+def get_statistics():
+  # Subject wise statistics
+  # First get attempts with their scores and question counts
+  attempts_with_scores = db.session.query(
+      Subject.name,
+      QuizAttempt.score,
+      func.count(Question.id).label('question_count')
+  ).join(Chapter, Subject.id == Chapter.subject_id) \
+   .join(Quiz, Chapter.id == Quiz.chapter_id) \
+   .join(QuizAttempt, Quiz.id == QuizAttempt.quiz_id) \
+   .join(Question, Question.quiz_id == Quiz.id) \
+   .group_by(QuizAttempt.id).all()
+
+  # print(attempts_with_scores)
+  # [('Mathematics', 5, 5), ('Mathematics', 4, 5), ('Mathematics', 3, 5), ('Mathematics', 2, 5), ('Mathematics', 1, 5), ('Mathematics', 5, 5)]
+
+  # Equivalent SQL:
+  # SELECT subject.name, quiz_attempt.score, COUNT(question.id) as question_count
+  # FROM subject
+  # JOIN chapter ON subject.id = chapter.subject_id
+  # JOIN quiz ON chapter.id = quiz.chapter_id
+  # JOIN quiz_attempt ON quiz.id = quiz_attempt.quiz_id
+  # JOIN question ON question.quiz_id = quiz.id
+  # GROUP BY quiz_attempt.id;
+
+  # Process the results to get subject statistics
+  subject_stats = {}
+  for name, score, question_count in attempts_with_scores:
+    if name not in subject_stats:
+      subject_stats[name] = {
+          'name': name,
+          'attempts': 0,
+          'top_percentage': 0
+      }
+
+    subject_stats[name]['attempts'] += 1
+    percentage = (score * 100.0) / question_count if question_count > 0 else 0
+    subject_stats[name]['top_percentage'] = max(
+        subject_stats[name]['top_percentage'],
+        percentage
+    )
+
+  subject_data = list(subject_stats.values())
+
+  return jsonify({
+      'success': True,
+      'counts': {
+          'subjects': Subject.query.count(),
+          'chapters': Chapter.query.count(),
+          'quizzes': Quiz.query.count(),
+          'attempts': QuizAttempt.query.count(),
+          'questions': Question.query.count(),
+      },
+      'subject_statistics': subject_data
+  })
