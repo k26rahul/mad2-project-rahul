@@ -23,7 +23,9 @@ class UpdatedJSONProvider(DefaultJSONProvider):
 
 def create_app():
   app = Flask(__name__,
-              template_folder='../templates')  # Set template folder path
+              template_folder='../templates',
+              static_folder='../static',  # Add static folder configuration
+              static_url_path='/static')  # URLs will be prefixed with /static
   app.config.from_object(Config)
   app.json_provider_class = UpdatedJSONProvider
 

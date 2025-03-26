@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, request, current_app
 from flask_security import current_user, roles_required, roles_accepted
 from db.models import db, QuizAttempt, Quiz
 from app.celery_tasks import send_email_task
@@ -157,3 +157,16 @@ def send_test_email():
   send_email_task.delay(email, "Welcome to Quiz Master", email_body)
 
   return jsonify(success=True, message=f"Test email sent to {email}!")
+
+
+@user_bp.route('/export-attempts', methods=['POST'])
+@roles_required('user')
+def export_attempts():
+  # This will trigger the async task and return immediately
+  from app.celery_tasks import generate_user_attempts_csv
+  task = generate_user_attempts_csv.delay(current_user.id)
+  
+  return jsonify(
+      success=True,
+      message="Your export request has been received. You will receive an email once it's ready."
+  )

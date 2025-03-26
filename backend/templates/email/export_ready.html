@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <h2>Hello {{ name }},</h2>
+        <p>Your quiz attempts export is ready!</p>
+        <p>Click the button below to download your data:</p>
+        <p>
+            <a href="{{ download_url }}"
+               style="background-color: #4CAF50;
+                      color: white;
+                      padding: 10px 20px;
+                      text-decoration: none;
+                      border-radius: 5px">Download CSV</a>
+        </p>
+        <p>
+            If the button doesn't work, you can copy and paste this link in your browser:
+        </p>
+        <p>{{ download_url }}</p>
+    </body>
+</html>

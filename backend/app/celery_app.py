@@ -53,6 +53,6 @@ celery.conf.beat_schedule = {
     'send-monthly-reports': {
         'task': 'app.celery_tasks.send_monthly_reports',
         'schedule': crontab(day_of_month=1, hour=9, minute=0),  # Run at 9 AM on 1st of every month
-        'schedule': 5.0,  # For testing
+        # 'schedule': 5.0,  # For testing
     },
 }

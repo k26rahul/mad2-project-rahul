@@ -1,3 +1,7 @@
+import csv
+import os
+from datetime import datetime
+from sqlalchemy import desc
 from flask import render_template
 from flask_mail import Message
 from app.celery_app import celery, mail, app
@@ -137,3 +141,70 @@ def send_monthly_reports():
     )
 
   print("Monthly activity reports task completed!")
+
+
+@celery.task
+def generate_user_attempts_csv(user_id):
+  user = User.query.get(user_id)
+  if not user:
+    return False
+
+  # Get all attempts for the user
+  attempts = QuizAttempt.query.filter_by(user_id=user_id).all()
+  
+  # Generate filename with timestamp
+  timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+  filename = f"user_{user_id}_{timestamp}.csv"
+  filepath = os.path.join(app.static_folder, filename)
+  
+  # Ensure static directory exists
+  os.makedirs(app.static_folder, exist_ok=True)
+  
+  # Write CSV file
+  with open(filepath, 'w', newline='') as csvfile:
+    writer = csv.writer(csvfile)
+    # Write header
+    writer.writerow([
+        'Quiz Title', 'Subject', 'Chapter', 'Score', 'Total Questions',
+        'Percentage', 'Attempted At', 'Rank', 'Total Attempts'
+    ])
+    
+    # Write attempt data
+    for attempt in attempts:
+      quiz = attempt.quiz
+      # Calculate rank for this attempt
+      all_attempts = QuizAttempt.query.filter_by(quiz_id=quiz.id)\
+          .order_by(desc(QuizAttempt.score)).all()
+      rank = next(i for i, a in enumerate(all_attempts, 1) if a.id == attempt.id)
+      
+      total_questions = len(quiz.questions)
+      percentage = (attempt.score / total_questions * 100) if total_questions > 0 else 0
+      
+      writer.writerow([
+          quiz.title,
+          quiz.chapter.subject.name,
+          quiz.chapter.name,
+          attempt.score,
+          total_questions,
+          f"{percentage:.2f}%",
+          attempt.attempted_at.strftime('%Y-%m-%d %H:%M:%S'),
+          rank,
+          len(all_attempts)
+      ])
+
+  # Send email notification
+  download_url = f"http://localhost:5000/static/{filename}"
+  email_body = render_template(
+      'email/export_ready.html',
+      name=user.name,
+      download_url=download_url
+  )
+  
+  send_email_task.delay(
+      user.email,
+      "Your Quiz Attempts Export is Ready",
+      email_body,
+      is_html=True
+  )
+  
+  return True
