@@ -1,0 +1,61 @@
+{
+  "artificialDelayMilliseconds": 0,
+  "keepExistingTerminalsOpen": false,
+  "runOnStartup": false,
+  "terminals": [
+    {
+      "splitTerminals": [
+        {
+          "name": "Flask app",
+          "commands": ["cd backend", "./run.sh"],
+          "shouldRunCommands": false
+        }
+      ]
+    },
+    {
+      "splitTerminals": [
+        {
+          "name": "Frontend",
+          "commands": ["cd frontend", "./run.sh"],
+          "shouldRunCommands": false
+        }
+      ]
+    },
+    {
+      "splitTerminals": [
+        {
+          "name": "Redis",
+          "commands": ["cd backend", "redis-server --port 6380"],
+          "shouldRunCommands": false
+        }
+      ]
+    },
+    {
+      "splitTerminals": [
+        {
+          "name": "Celery",
+          "commands": ["cd backend", "celery -A app.celery_app.celery worker --loglevel=info"],
+          "shouldRunCommands": false
+        }
+      ]
+    },
+    {
+      "splitTerminals": [
+        {
+          "name": "Beat",
+          "commands": ["cd backend", "celery -A app.celery_app.celery beat --loglevel=info"],
+          "shouldRunCommands": false
+        }
+      ]
+    },
+    {
+      "splitTerminals": [
+        {
+          "name": "MailHog",
+          "commands": ["cd backend", "MailHog"],
+          "shouldRunCommands": false
+        }
+      ]
+    }
+  ]
+}
