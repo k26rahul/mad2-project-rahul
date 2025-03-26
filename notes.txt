@@ -14,3 +14,8 @@ http://localhost:8025
 MailHog
 redis-server --port 
 celery -A app.celery_app.celery worker --loglevel=info
+
+===
+cd backend, then
+celery -A app.celery_app.celery beat --loglevel=info
+celery -A app.celery_app.celery worker --loglevel=info
