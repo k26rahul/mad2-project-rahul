@@ -1,6 +1,8 @@
 from flask import Blueprint, jsonify, request
 from flask_security import current_user, roles_required
 from db.models import db, QuizAttempt, Quiz
+from app.celery_tasks import send_email_task
+from datetime import datetime
 
 user_bp = Blueprint('user', __name__)
 
@@ -142,3 +144,16 @@ def create_quiz_attempt(quiz_id):
       answer_feedback=answer_feedback,
       message="Quiz attempt recorded successfully"
   )
+
+
+@user_bp.route('/send-test-email', methods=['GET'])
+@roles_required('user')
+def send_test_email():
+  email = current_user.email
+  name = current_user.name
+  current_time = datetime.now().strftime("%I:%M %p on %B %d, %Y")
+
+  email_body = f"Hi {name}, this is a test email from Quiz Master at {current_time}! We're glad to have you here."
+  send_email_task.delay(email, "Welcome to Quiz Master", email_body)
+
+  return jsonify(success=True, message=f"Test email sent to {email}!")

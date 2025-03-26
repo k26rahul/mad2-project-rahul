@@ -9,3 +9,8 @@ chmod +x MailHog
 sudo mv MailHog /usr/local/bin/
 MailHog
 http://localhost:8025
+
+===
+MailHog
+redis-server --port 
+celery -A app.celery_app.celery worker --loglevel=info
