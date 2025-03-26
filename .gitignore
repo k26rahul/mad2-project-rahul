@@ -5,3 +5,4 @@ venv/
 **/*.db
 **/*.rdb
 **/celerybeat-schedule
+**/static/*.csv

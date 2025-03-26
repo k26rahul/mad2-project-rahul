@@ -138,6 +138,32 @@
             </div>
           </div>
         </div>
+
+        <!-- Export Section -->
+        <div class="col-12">
+          <div class="card border-0 shadow-lg rounded-4">
+            <div class="card-header bg-primary bg-opacity-10 border-0 rounded-top-4">
+              <h4 class="fw-bold mb-0">Export Your Data</h4>
+            </div>
+            <div class="card-body text-center">
+              <p class="lead mb-4">
+                Download a detailed report of all your quiz attempts in CSV format.
+                <br />
+                <small class="text-muted">
+                  Includes quiz details, scores, rankings, and attempt timestamps.
+                </small>
+              </p>
+              <button class="btn btn-primary btn-lg" @click="exportData" :disabled="isExporting">
+                <i class="bi bi-download me-2"></i>
+                {{ isExporting ? 'Requesting Export...' : 'Export Quiz History' }}
+              </button>
+              <div v-if="exportMessage" class="alert alert-success mt-3">
+                <i class="bi bi-envelope-check me-2"></i>
+                {{ exportMessage }}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -156,6 +182,7 @@ import {
   ArcElement,
 } from 'chart.js';
 import { quizAttemptStore, subjectStore } from '@/store';
+import { post } from '@/utils/fetchHelper';
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ArcElement);
 
@@ -163,6 +190,13 @@ export default {
   components: {
     Bar,
     Pie,
+  },
+
+  data() {
+    return {
+      isExporting: false,
+      exportMessage: '',
+    };
   },
 
   computed: {
@@ -334,6 +368,21 @@ export default {
       if (percentage >= 60) return 'text-primary';
       if (percentage >= 40) return 'text-warning';
       return 'text-danger';
+    },
+
+    async exportData() {
+      this.isExporting = true;
+      try {
+        const response = await post('/api/user/export-attempts');
+        if (response.success) {
+          this.exportMessage = response.message;
+        }
+      } catch (error) {
+        console.error('Export failed:', error);
+        this.exportMessage = 'Failed to initiate export. Please try again.';
+      } finally {
+        this.isExporting = false;
+      }
     },
   },
 };
