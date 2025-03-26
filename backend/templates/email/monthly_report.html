@@ -1,0 +1,56 @@
+{% extends "email/base.html" %}
+
+{% block title %}Monthly Activity Report - {{ month }}{% endblock %}
+
+{% block content %}
+  <p class="lead">Hi {{ name }},</p>
+  <p>Here's your activity summary for {{ month }}:</p>
+
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">Overview</h5>
+      <ul class="list-unstyled">
+        <li>New quizzes added this month: {{ new_quizzes }}</li>
+        <li>Total quizzes attempted: {{ total_attempts }}</li>
+        <li>Overall average score: {{ "%.1f"|format(average_score) }}%</li>
+      </ul>
+    </div>
+  </div>
+
+  {% for subject, stats in subject_stats.items() %}
+    <div class="card mb-3">
+      <div class="card-header">
+        <h5 class="mb-0">{{ subject }}</h5>
+        <small class="text-muted">
+          Overall: {{ stats.total_score }}/{{ stats.total_questions }}
+          ({{ "%.1f"|format(stats.total_score / stats.total_questions * 100 if stats.total_questions > 0 else 0) }}%)
+        </small>
+      </div>
+      <div class="card-body">
+        {% for chapter, chapter_stats in stats.chapters.items() %}
+          <div class="mb-3">
+            <h6>{{ chapter }}</h6>
+            <small class="text-muted">
+              Total: {{ chapter_stats.score }}/{{ chapter_stats.total }}
+              ({{ "%.1f"|format(chapter_stats.score / chapter_stats.total * 100 if chapter_stats.total > 0 else 0) }}%)
+            </small>
+            <ul class="list-group list-group-flush">
+              {% for attempt in chapter_stats.attempts %}
+                <li class="list-group-item">
+                  <strong>{{ attempt.quiz_title }}</strong>
+                  <br>
+                  Score: {{ attempt.score }}/{{ attempt.total }} ({{ "%.1f"|format(attempt.percentage) }}%)
+                  <br>
+                  Rank: {{ attempt.rank }} out of {{ attempt.total_attempts }}
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endfor %}
+
+  <p>Keep up the great work and challenge yourself with more quizzes!</p>
+  <p class="fw-bold">Happy learning!</p>
+{% endblock %}

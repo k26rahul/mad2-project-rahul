@@ -3,6 +3,7 @@ from flask_security import roles_required
 from db.models import db, User
 from sqlalchemy import func
 from db.models import Subject, Chapter, Quiz, Question, QuizAttempt
+from db.seed import seed_data
 
 admin_bp = Blueprint('admin', __name__)
 
@@ -124,3 +125,25 @@ def get_statistics():
       },
       'subject_statistics': subject_data
   })
+
+
+@admin_bp.route('/repopulate', methods=['POST'])
+@roles_required('admin')
+def repopulate_database():
+  try:
+    # Drop all tables
+    db.drop_all()
+    # Recreate all tables
+    db.create_all()
+    # Reseed the database
+    seed_data()
+
+    return jsonify(
+        success=True,
+        message="Database successfully repopulated"
+    )
+  except Exception as e:
+    return jsonify(
+        success=False,
+        message=f"Failed to repopulate database: {str(e)}"
+    ), 500

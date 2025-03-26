@@ -1,0 +1,20 @@
+{% extends "email/base.html" %}
+
+{% block title %}New Quizzes Available{% endblock %}
+
+{% block content %}
+  <p class="lead">Hi {{ name }},</p>
+  <p>Here are the new quizzes since your last login on {{ last_login }}:</p>
+  <ul class="list-group list-group-flush mb-3">
+    {% for quiz in quizzes %}
+      <li class="list-group-item">
+        <a href="http://localhost:5173/user/quiz/{{ quiz.id }}"
+           class="text-decoration-none">{{ quiz.title }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+  <p>
+    Check out these new quizzes and challenge yourself to learn something new today!
+  </p>
+  <p class="fw-bold">Happy learning!</p>
+{% endblock %}

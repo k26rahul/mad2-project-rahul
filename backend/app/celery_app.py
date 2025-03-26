@@ -4,6 +4,18 @@ from flask import Flask
 from celery.schedules import crontab
 from app import app
 
+app.config.update(
+    broker_url='redis://localhost:6380/0',  # New key for CELERY_BROKER_URL
+    result_backend='redis://localhost:6380/0',  # New key for CELERY_RESULT_BACKEND
+    MAIL_SERVER='localhost',
+    MAIL_PORT=1025,
+    MAIL_USERNAME='',
+    MAIL_PASSWORD='',
+    MAIL_USE_TLS=False,
+    MAIL_USE_SSL=False,
+    MAIL_DEFAULT_SENDER='noreply@example.com'
+)
+
 
 def make_celery(app):
   celery = Celery(
@@ -23,27 +35,10 @@ def make_celery(app):
   return celery
 
 
-def create_app():
-  # app = Flask(__name__)
-  app.config.update(
-      broker_url='redis://localhost:6380/0',  # New key for CELERY_BROKER_URL
-      result_backend='redis://localhost:6380/0',  # New key for CELERY_RESULT_BACKEND
-      MAIL_SERVER='localhost',
-      MAIL_PORT=1025,
-      MAIL_USERNAME='',
-      MAIL_PASSWORD='',
-      MAIL_USE_TLS=False,
-      MAIL_USE_SSL=False,
-      MAIL_DEFAULT_SENDER='noreply@example.com'
-  )
-  return app
-
-
 def register_tasks():
   import app.celery_tasks
 
 
-app = create_app()
 mail = Mail(app)
 celery = make_celery(app)
 register_tasks()
@@ -52,6 +47,12 @@ register_tasks()
 celery.conf.beat_schedule = {
     'send-daily-reminders': {
         'task': 'app.celery_tasks.send_daily_reminders',
-        'schedule': 5.0,  # For testing. Change to crontab(hour=8, minute=0) for 8 AM daily.
+        'schedule': crontab(hour=8, minute=0),  # Run at 8 AM daily
+        # 'schedule': 5.0,  # For testing
+    },
+    'send-monthly-reports': {
+        'task': 'app.celery_tasks.send_monthly_reports',
+        'schedule': crontab(day_of_month=1, hour=9, minute=0),  # Run at 9 AM on 1st of every month
+        'schedule': 5.0,  # For testing
     },
 }
