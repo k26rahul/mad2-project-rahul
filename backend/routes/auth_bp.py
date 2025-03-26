@@ -48,6 +48,7 @@ def login():
     ), 403
 
   user.fs_uniquifier = str(uuid.uuid4())
+  user.last_login = datetime.now()  # Update last login timestamp
   db.session.commit()
 
   login_user(user, remember=remember_me)

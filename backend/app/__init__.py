@@ -32,7 +32,6 @@ def create_app():
 
   CORS(app, supports_credentials=True)
 
-  register_blueprints(app)
   register_error_handlers(app)
 
   with app.app_context():
@@ -43,3 +42,4 @@ def create_app():
 
 
 app = create_app()
+register_blueprints(app)

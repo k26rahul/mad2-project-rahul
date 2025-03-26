@@ -4,3 +4,4 @@ venv/
 /backend/.env
 **/*.db
 **/*.rdb
+**/celerybeat-schedule

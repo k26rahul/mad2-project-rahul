@@ -52,6 +52,9 @@ class User(Base, UserMixin):
   name: Mapped[str] = mapped_column(String(100), nullable=False)
   dob: Mapped[Optional[datetime]] = mapped_column(nullable=True)
   qualification: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
+  last_login: Mapped[Optional[datetime]] = mapped_column(
+      nullable=True, default=lambda: datetime.now()
+  )
 
   roles: Mapped[list['Role']] = relationship(
       "Role",

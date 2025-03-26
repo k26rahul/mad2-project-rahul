@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from flask_security import current_user, roles_required
+from flask_security import current_user, roles_required, roles_accepted
 from db.models import db, QuizAttempt, Quiz
 from app.celery_tasks import send_email_task
 from datetime import datetime
@@ -147,7 +147,7 @@ def create_quiz_attempt(quiz_id):
 
 
 @user_bp.route('/send-test-email', methods=['GET'])
-@roles_required('user')
+@roles_accepted('user', 'admin')
 def send_test_email():
   email = current_user.email
   name = current_user.name

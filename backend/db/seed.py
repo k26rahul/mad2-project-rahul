@@ -3,6 +3,7 @@ from db.models import db, Role, User, Subject, Chapter, Quiz, Question, QuizAtte
 from .data_subjects import data_subjects
 from .data_quizzes import data_quizzes
 from .data_quiz_attempts import data_quiz_attempts
+from datetime import datetime, timedelta
 
 
 def seed_data():
@@ -32,7 +33,8 @@ def seed_data():
         email="user@example.com",
         password=hash_password("12345"),
         name="Regular User",
-        roles=[user_role]
+        roles=[user_role],
+        last_login=datetime.now() - timedelta(days=1)  # Set last login to one day ago
     )
     db.session.add(user)
     db.session.commit()
