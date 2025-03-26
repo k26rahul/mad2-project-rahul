@@ -8,7 +8,6 @@ from db.seed import seed_data
 from .config import Config
 from .blueprints import register_blueprints
 from .error_handlers import register_error_handlers
-from .celery_config import make_celery
 
 from datetime import datetime, date
 from flask.json.provider import DefaultJSONProvider
@@ -40,8 +39,7 @@ def create_app():
     db.create_all()
     seed_data()
 
-  celery = make_celery(app)
-  return app, celery
+  return app
 
 
-app, celery = create_app()
+app = create_app()
