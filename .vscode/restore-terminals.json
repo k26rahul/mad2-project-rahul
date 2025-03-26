@@ -8,7 +8,7 @@
         {
           "name": "Flask app",
           "commands": ["cd backend", "./run.sh"],
-          "shouldRunCommands": false
+          "shouldRunCommands": true
         }
       ]
     },
@@ -17,7 +17,7 @@
         {
           "name": "Frontend",
           "commands": ["cd frontend", "./run.sh"],
-          "shouldRunCommands": false
+          "shouldRunCommands": true
         }
       ]
     },
@@ -26,7 +26,7 @@
         {
           "name": "Redis",
           "commands": ["cd backend", "redis-server --port 6380"],
-          "shouldRunCommands": false
+          "shouldRunCommands": true
         }
       ]
     },
@@ -34,8 +34,13 @@
       "splitTerminals": [
         {
           "name": "Celery",
-          "commands": ["cd backend", "celery -A app.celery_app.celery worker --loglevel=info"],
-          "shouldRunCommands": false
+          "commands": [
+            "cd backend",
+            "# Wait for Flask app to initialize to prevent race conditions",
+            "sleep 2",
+            "nodemon --watch app --ext py --exec \"celery -A app.celery_app.celery worker --loglevel=info\""
+          ],
+          "shouldRunCommands": true
         }
       ]
     },
@@ -43,8 +48,13 @@
       "splitTerminals": [
         {
           "name": "Beat",
-          "commands": ["cd backend", "celery -A app.celery_app.celery beat --loglevel=info"],
-          "shouldRunCommands": false
+          "commands": [
+            "cd backend",
+            "# Wait for Flask app to initialize to prevent race conditions",
+            "sleep 2",
+            "nodemon --watch app --ext py --exec \"celery -A app.celery_app.celery beat --loglevel=info\""
+          ],
+          "shouldRunCommands": true
         }
       ]
     },
@@ -53,7 +63,7 @@
         {
           "name": "MailHog",
           "commands": ["cd backend", "MailHog"],
-          "shouldRunCommands": false
+          "shouldRunCommands": true
         }
       ]
     }
