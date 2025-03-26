@@ -1,101 +1,139 @@
 from datetime import datetime, timedelta
 
-# Generate timestamps for the last 5 days
 now = datetime.now()
-dates = [now - timedelta(days=i) for i in range(5)]  # Changed to use datetime objects directly
 
+# Last five days, quiz 1, score 1-5
 data_quiz_attempts = [
     {
         "quiz_id": 1,
         "user_id": 2,
-        "attempted_at": dates[0],
-        "score": 5,     # 100% - success - all correct
+        "attempted_at": now - timedelta(days=0),
+        "score": 5,
     },
     {
         "quiz_id": 1,
         "user_id": 2,
-        "attempted_at": dates[1],
-        "score": 4,     # 80% - success
+        "attempted_at": now - timedelta(days=1),
+        "score": 4,
     },
     {
         "quiz_id": 1,
         "user_id": 2,
-        "attempted_at": dates[2],
-        "score": 3,     # 60% - primary
+        "attempted_at": now - timedelta(days=2),
+        "score": 3,
     },
     {
         "quiz_id": 1,
         "user_id": 2,
-        "attempted_at": dates[3],
-        "score": 2,     # 40% - warning
+        "attempted_at": now - timedelta(days=3),
+        "score": 2,
     },
     {
         "quiz_id": 1,
         "user_id": 2,
-        "attempted_at": dates[4],
-        "score": 1,     # 20% - danger
+        "attempted_at": now - timedelta(days=4),
+        "score": 1,
     }
 ]
 
+# March
 data_quiz_attempts += [
     {
-        "quiz_id": 1,
+        "quiz_id": 2,
         "user_id": 2,
-        "attempted_at": datetime(2025, 1, 1),
-        "score": 4,
+        "attempted_at": datetime(2025, 3, 20),
+        "score": 0,
     },
     {
         "quiz_id": 2,
         "user_id": 2,
-        "attempted_at": datetime(2025, 1, 1),
-        "score": 4,
+        "attempted_at": datetime(2025, 3, 20),
+        "score": 0,
     },
+    {
+        "quiz_id": 2,
+        "user_id": 2,
+        "attempted_at": datetime(2025, 3, 20),
+        "score": 3,
+    },
+    {
+        "quiz_id": 2,
+        "user_id": 3,
+        "attempted_at": datetime(2025, 3, 20),
+        "score": 3,
+    },
+    {
+        "quiz_id": 2,
+        "user_id": 3,
+        "attempted_at": datetime(2025, 3, 20),
+        "score": 3,
+    },
+]
+
+# January
+data_quiz_attempts += [
     {
         "quiz_id": 3,
         "user_id": 2,
-        "attempted_at": datetime(2025, 2, 1),
+        "attempted_at": datetime(2025, 1, 25),
         "score": 4,
     },
     {
         "quiz_id": 5,
         "user_id": 2,
-        "attempted_at": datetime(2025, 1, 1),
-        "score": 2,
-    },
-    {
-        "quiz_id": 5,
-        "user_id": 2,
-        "attempted_at": datetime(2025, 1, 1),
-        "score": 2,
+        "attempted_at": datetime(2025, 1, 25),
+        "score": 4,
     },
     {
         "quiz_id": 7,
         "user_id": 2,
-        "attempted_at": datetime(2025, 1, 1),
+        "attempted_at": datetime(2025, 1, 25),
         "score": 4,
     },
     {
         "quiz_id": 9,
         "user_id": 2,
-        "attempted_at": datetime(2025, 1, 1),
+        "attempted_at": datetime(2025, 1, 25),
+        "score": 4,
+    },
+    {
+        "quiz_id": 11,
+        "user_id": 2,
+        "attempted_at": datetime(2025, 1, 25),
+        "score": 4,
+    },
+]
+
+# February
+data_quiz_attempts += [
+    {
+        "quiz_id": 3,
+        "user_id": 3,
+        "attempted_at": datetime(2025, 2, 18),
+        "score": 2,
+    },
+    {
+        "quiz_id": 5,
+        "user_id": 3,
+        "attempted_at": datetime(2025, 2, 18),
+        "score": 2,
+    },
+    {
+        "quiz_id": 7,
+        "user_id": 3,
+        "attempted_at": datetime(2025, 2, 18),
         "score": 2,
     },
     {
         "quiz_id": 9,
-        "user_id": 2,
-        "attempted_at": datetime(2025, 1, 1),
+        "user_id": 3,
+        "attempted_at": datetime(2025, 2, 18),
         "score": 2,
     },
     {
-        "quiz_id": 9,
-        "user_id": 2,
-        "attempted_at": datetime(2025, 1, 1),
+        "quiz_id": 11,
+        "user_id": 3,
+        "attempted_at": datetime(2025, 2, 18),
         "score": 2,
     },
-    {
-        "quiz_id": 9,
-        "user_id": 2,
-        "attempted_at": datetime(2025, 1, 1),
-        "score": 5,
-    }
 ]

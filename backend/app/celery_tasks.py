@@ -71,7 +71,7 @@ def send_monthly_reports():
     for attempt in user_attempts:
       quiz = attempt.quiz
       chapter = quiz.chapter
-      subject = chapter.name
+      subject = chapter.subject.name
 
       if subject not in subject_stats:
         subject_stats[subject] = {

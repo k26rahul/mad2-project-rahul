@@ -27,17 +27,21 @@ def seed_data():
     db.session.add(admin_user)
     db.session.commit()
 
-  if not User.query.filter_by(email="user@example.com").first():
-    print("Seeding user...")
-    user = User(
-        email="user@example.com",
-        password=hash_password("12345"),
-        name="Regular User",
-        roles=[user_role],
-        last_login=datetime.now() - timedelta(days=1)  # Set last login to one day ago
-    )
-    db.session.add(user)
-    db.session.commit()
+  for i in range(1, 3):
+    email = f"user{i}@example.com"
+    if not User.query.filter_by(email=email).first():
+      print(f"Seeding user {i}...")
+      user = User(
+          email=email,
+          password=hash_password("12345"),
+          name=f"Regular User {i}",
+          roles=[user_role],
+          last_login=datetime.now() - timedelta(days=1),
+          dob=datetime(2000, 1, 1),
+          qualification="High School"
+      )
+      db.session.add(user)
+      db.session.commit()
 
   if not Subject.query.first():
     print("Seeding subjects and chapters...")
