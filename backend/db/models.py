@@ -95,7 +95,8 @@ class Quiz(Base):
 
   chapter: Mapped["Chapter"] = relationship("Chapter", back_populates="quizzes")
   questions: Mapped[list["Question"]] = relationship("Question", back_populates="quiz", cascade="all, delete-orphan")
-  attempts: Mapped[list["QuizAttempt"]] = relationship("QuizAttempt", back_populates="quiz")
+  attempts: Mapped[list["QuizAttempt"]] = relationship(
+      "QuizAttempt", back_populates="quiz", cascade="all, delete-orphan")
 
 
 class Question(Base):
