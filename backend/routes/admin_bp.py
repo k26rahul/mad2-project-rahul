@@ -4,8 +4,19 @@ from db.models import db, User
 from sqlalchemy import func
 from db.models import Subject, Chapter, Quiz, Question, QuizAttempt
 from db.seed import seed_data
+from app.cache import cache
 
 admin_bp = Blueprint('admin', __name__)
+
+
+@admin_bp.route('/test-cache')
+@cache.cached(timeout=5)
+def test_cache():
+  from datetime import datetime
+  from flask import jsonify
+  return jsonify(
+      time=str(datetime.now()),
+  )
 
 
 def _construct_user_dict(user):

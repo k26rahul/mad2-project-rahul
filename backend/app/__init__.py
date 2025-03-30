@@ -8,6 +8,7 @@ from db.seed import seed_data
 from .config import Config
 from .blueprints import register_blueprints
 from .error_handlers import register_error_handlers
+from .cache import cache
 
 from datetime import datetime, date
 from flask.json.provider import DefaultJSONProvider
@@ -30,6 +31,9 @@ def create_app():
   app.json_provider_class = UpdatedJSONProvider
 
   db.init_app(app)
+
+  cache.init_app(app)
+
   user_datastore = SQLAlchemyUserDatastore(db, User, Role)
   Security(app, user_datastore, register_blueprint=False)
 
@@ -46,3 +50,13 @@ def create_app():
 
 app = create_app()
 register_blueprints(app)
+
+
+@app.route('/test-cache')
+@cache.cached(timeout=5)
+def test_cache():
+  from datetime import datetime
+  from flask import jsonify
+  return jsonify(
+      time=str(datetime.now()),
+  )
