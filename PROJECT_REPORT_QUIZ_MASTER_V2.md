@@ -13,7 +13,11 @@ Modern Application Development II
 
 # Quiz Master V2
 
-Quiz Master V2 is a multi-user exam preparation platform where users can practice quizzes for different subjects and chapters. The platform has two roles: **Admin** (Quiz Master) and **Users**. The admin manages subjects, chapters, and quizzes, while users can register, take quizzes, and track their scores.
+A multi-user exam preparation platform where users can practice quizzes for different subjects and chapters.
+
+The platform has two roles: **Admin** (Quiz Master) and **Users**.
+
+The admin manages subjects, chapters, and quizzes, while users can register, take quizzes, and track their scores.
 
 ## Features 🚀
 
@@ -86,7 +90,9 @@ frontend/               # Client-side application code
 
 ## API Design 🛣️
 
-I implemented a comprehensive REST API following RESTful principles and organized routes by domain. Each route handles specific functionality with proper HTTP methods and status codes.
+I implemented a comprehensive REST API following RESTful principles and organized routes by domain.
+
+Each route handles specific functionality with proper HTTP methods and status codes.
 
 ### Authentication Routes `/api/auth`
 

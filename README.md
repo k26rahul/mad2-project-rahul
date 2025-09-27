@@ -1,6 +1,15 @@
-# Quiz Master V2
+# Quiz Master - V2
 
-Quiz Master V2 is a multi-user exam preparation platform where users can practice quizzes for different subjects and chapters. The platform has two roles: **Admin** (Quiz Master) and **Users**. The admin manages subjects, chapters, and quizzes, while users can register, take quizzes, and track their scores.
+> Project submission for Modern Application Development II (January 2025).
+>
+> - [📄 Project Report](PROJECT_REPORT_QUIZ_MASTER_V2.md)
+> - [📹 Video Presentation](https://drive.google.com/file/d/1w2S_fLCxj1wUBu0FfCn3Lyl53yswBkMO/view?usp=drive_link)
+
+A multi-user exam preparation platform where users can practice quizzes for different subjects and chapters.
+
+The platform has two roles: **Admin** (Quiz Master) and **Users**.
+
+The admin manages subjects, chapters, and quizzes, while users can register, take quizzes, and track their scores.
 
 ## Features 🚀
 
@@ -229,3 +238,149 @@ Methods:
 - `create(quizId, answers)` - Create new quiz attempt
 
 Each store uses the `fetchHelper` utility for API communication and maintains its data in a reactive Map structure. The stores also handle related entity changes through various handle methods to maintain data consistency.
+
+# Project Setup and Running Guide
+
+This guide provides step-by-step instructions for setting up and running the application on both Linux and Windows.
+
+**Follow the sections in order.**
+
+## Prerequisites
+
+- Git installed
+- Python 3.x
+- Node.js and npm
+- VSCode (recommended for terminal restoration extension)
+
+## Initial Setup
+
+1. **Clone the Repository**
+
+   ```bash
+   git clone https://github.com/k26rahul/mad2-project-rahul.git
+   cd mad2-project-rahul
+   ```
+
+2. **Set Up Virtual Environment**
+
+   - Linux:
+     ```bash
+     python -m venv venv
+     source venv/bin/activate
+     ```
+   - Windows:
+     ```bash
+     python -m venv venv
+     venv\Scripts\activate
+     ```
+
+3. **Install Python Dependencies**
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+4. **Install Nodemon Globally**
+
+   ```bash
+   npm install -g nodemon
+   ```
+
+5. **Install Redis**
+
+   - Linux:
+     ```bash
+     sudo apt-get update
+     sudo apt-get install redis-server
+     ```
+   - Windows:
+     1. Download from https://github.com/microsoftarchive/redis/releases (e.g., MSI installer).
+     2. During installation:
+        - Set port to 6380.
+        - Check "Add to PATH".
+     3. If PATH not added, manually add "C:\Program Files\Redis" to system PATH.
+
+   **Troubleshooting Redis on Windows:**
+
+   - If fails to start: Run `& "C:\Program Files\Redis\redis-server.exe" --bind 127.0.0.1 --port 6380`.
+   - If port 6380 in use:
+     1. Find process: `netstat -ano | findstr 6380`.
+     2. Get details: `tasklist /FI "PID eq <PID>"`.
+     3. Kill: `taskkill /PID <PID> /F` or use Task Manager (Services tab, sort by PID).
+
+6. **Install MailHog**
+
+   - Download from https://github.com/mailhog/MailHog/releases.
+   - Linux: Use MailHog_linux_amd64; make executable and add to PATH.
+   - Windows: Use MailHog_windows_amd64.exe; rename to MailHog.exe and add to PATH.
+
+7. **Install Frontend Dependencies**
+   ```bash
+   cd frontend
+   npm install
+   cd ..
+   ```
+
+## Running the Application
+
+Install VSCode extension: [Restore Terminals](https://marketplace.visualstudio.com/items?itemName=EthanSK.restore-terminals) by Ethan Sarif-Kattan.
+
+**For Windows Users:** Delete `.vscode/restore-terminals.json` and rename `.vscode/restore-terminals.windows.json` to `restore-terminals.json` for Windows-specific commands.
+
+1. Open project in VSCode.
+2. Use extension: Press `Ctrl+Shift+P`, type "Restore Terminals", and select it.
+
+**Note:** If extension fails (common on Windows), manually open 6 terminals in VSCode and run commands below. This is more reliable.
+
+### Manual Terminal Commands
+
+- **Terminal 1: Flask Backend**
+
+  ```bash
+  cd backend
+  # Linux: ./run.sh
+  # Windows (PowerShell): ./run.ps1
+  ```
+
+- **Terminal 2: Frontend**
+
+  ```bash
+  cd frontend
+  # Linux: ./run.sh
+  # Windows (PowerShell): ./run.ps1
+  ```
+
+- **Terminal 3: Redis Server**
+
+  ```bash
+  cd backend
+  redis-server --port 6380
+  # If Redis fails to start, refer to troubleshooting steps above.
+  ```
+
+- **Terminal 4: Celery Worker**
+
+  ```bash
+  cd backend
+  # Linux: celery -A app.celery_app.celery worker --loglevel=info
+  # Windows: celery -A app.celery_app.celery worker --loglevel=info --pool=solo
+  ```
+
+- **Terminal 5: Celery Beat**
+
+  ```bash
+  cd backend
+  celery -A app.celery_app.celery beat --loglevel=info
+  ```
+
+- **Terminal 6: MailHog Server**
+  ```bash
+  # Linux: MailHog
+  # Windows: MailHog.exe or full path if not in PATH
+  ```
+
+## Access the Application
+
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:5000
+- MailHog UI: http://localhost:8025

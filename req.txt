@@ -1,0 +1,12 @@
+flask
+sqlalchemy
+flask_sqlalchemy
+flask_security
+flask_cors
+flask_session
+flask_caching
+flask_mail
+argon2_cffi
+dotenv
+redis
+celery
